@@ -1,14 +1,38 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 
+const words = ["Bashundhara", "Gulshan", "Banani", "Uttara", "Dhanmondi"];
+
 export default function HeroSection() {
+  const [wordIndex, setWordIndex] = useState(0);
+  const { scrollY } = useScroll();
+
+  useEffect(() => {
+    // Select a random starting word on client-side mount
+    setWordIndex(Math.floor(Math.random() * words.length));
+
+    const interval = setInterval(() => {
+      setWordIndex((prev) => (prev + 1) % words.length);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
+  
+  // Parallax calculations: translates the background image slower than scroll speed
+  const y = useTransform(scrollY, [0, 800], [0, 240]);
+  const opacity = useTransform(scrollY, [0, 800], [1, 0.4]);
+
   return (
     <section id="home" className="relative flex min-h-[80vh] flex-col items-center justify-center overflow-hidden bg-slate-900 px-6 py-24 text-center text-white sm:px-12">
-      {/* Background Image */}
-      <div className="absolute inset-0 z-0">
+      {/* Background Image Container with Parallax styling */}
+      <motion.div 
+        className="absolute inset-0 z-0 h-[120%] -top-[10%]"
+        style={{ y, opacity }}
+      >
         <Image 
           src="/hero-bg.png" 
           alt="Dhaka City Skyline at Dusk" 
@@ -19,7 +43,7 @@ export default function HeroSection() {
         {/* Overlays for text readability and smooth blending */}
         <div className="absolute inset-0 bg-slate-900/70" />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/30 to-transparent" />
-      </div>
+      </motion.div>
       
       <div className="relative z-10 flex max-w-4xl flex-col items-center gap-6">
         <motion.div
@@ -35,11 +59,40 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-5xl font-extrabold tracking-tight sm:text-6xl md:text-7xl"
+          className="flex flex-col gap-3 text-5xl font-extrabold tracking-tight sm:text-6xl md:text-7xl items-center text-white"
         >
-          Everything You Need in Dhaka,{" "}
-          <span className="bg-gradient-to-r from-teal-400 to-emerald-300 bg-clip-text text-transparent">
-            One Call Away.
+          <span>Everything You Need in</span>
+          <span className="relative inline-flex px-1 min-w-[160px] sm:min-w-[210px] md:min-w-[260px] justify-center overflow-hidden text-6xl sm:text-7xl md:text-8xl">
+            <AnimatePresence mode="wait">
+              <motion.span 
+                key={words[wordIndex]}
+                className="inline-block text-teal-400 font-extrabold"
+                initial={{ y: 25, opacity: 0 }}
+                animate={{ 
+                  y: 0, 
+                  opacity: 1,
+                  textShadow: ["0px 0px 0px rgba(45, 212, 191, 0)", "0px 0px 20px rgba(45, 212, 191, 0.8)", "0px 0px 0px rgba(45, 212, 191, 0)"]
+                }}
+                exit={{ y: -25, opacity: 0 }}
+                transition={{
+                  y: { type: "spring", stiffness: 300, damping: 25 },
+                  opacity: { duration: 0.15 },
+                  textShadow: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+                }}
+              >
+                {words[wordIndex]}
+              </motion.span>
+            </AnimatePresence>
+            {/* Animated Underline */}
+            <motion.span
+              className="absolute -bottom-1 left-0 h-[4px] bg-gradient-to-r from-teal-400 to-emerald-400 rounded-full"
+              initial={{ width: "0%" }}
+              animate={{ width: "100%" }}
+              transition={{ delay: 0.8, duration: 1, ease: "easeOut" }}
+            />
+          </span>
+          <span>
+            We Make It Happen.
           </span>
         </motion.h1>
 

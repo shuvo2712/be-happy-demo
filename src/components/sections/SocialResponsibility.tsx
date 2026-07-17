@@ -5,7 +5,7 @@ import { Heart } from "lucide-react";
 
 export default function SocialResponsibility() {
   return (
-    <section className="px-6 py-12 sm:px-12 lg:px-24">
+    <section id="responsibility" className="px-6 py-12 sm:px-12 lg:px-24">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         whileInView={{ opacity: 1, scale: 1 }}

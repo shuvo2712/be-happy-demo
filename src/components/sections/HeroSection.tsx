@@ -2,12 +2,24 @@
 
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+import Image from "next/image";
 
 export default function HeroSection() {
   return (
-    <section className="relative flex min-h-[80vh] flex-col items-center justify-center overflow-hidden bg-slate-900 px-6 py-24 text-center text-white sm:px-12">
-      {/* Background gradients */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-teal-900 via-slate-900 to-black opacity-80" />
+    <section id="home" className="relative flex min-h-[80vh] flex-col items-center justify-center overflow-hidden bg-slate-900 px-6 py-24 text-center text-white sm:px-12">
+      {/* Background Image */}
+      <div className="absolute inset-0 z-0">
+        <Image 
+          src="/hero-bg.png" 
+          alt="Dhaka City Skyline at Dusk" 
+          fill
+          priority
+          className="object-cover"
+        />
+        {/* Overlays for text readability and smooth blending */}
+        <div className="absolute inset-0 bg-slate-900/70" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/30 to-transparent" />
+      </div>
       
       <div className="relative z-10 flex max-w-4xl flex-col items-center gap-6">
         <motion.div

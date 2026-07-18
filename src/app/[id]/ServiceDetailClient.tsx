@@ -20,6 +20,8 @@ import Navbar from "@/components/ui/Navbar";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import AccommodationRedesign from "./AccommodationRedesign";
+import ConciergeRedesign from "./ConciergeRedesign";
+import TourRedesign from "./TourRedesign";
 
 /* ───────────── Fade-in on scroll ───────────── */
 function FadeInSection({
@@ -439,6 +441,12 @@ function StickyMobileCTA({
 export default function ServiceDetailClient({ service }: { service: ServiceType }) {
   if (service.id === "accommodation") {
     return <AccommodationRedesign service={service} />;
+  }
+  if (service.id === "concierge") {
+    return <ConciergeRedesign service={service} />;
+  }
+  if (service.id === "tour") {
+    return <TourRedesign service={service} />;
   }
   const IconComponent = iconMap[service.iconName];
   const headerRef = useRef<HTMLElement>(null);

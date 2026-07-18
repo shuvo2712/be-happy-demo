@@ -1,8 +1,20 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, ChevronRight, ChevronLeft, CheckCircle2, Phone, MessageCircle } from "lucide-react";
+import {
+  Check,
+  ChevronRight,
+  ChevronLeft,
+  CheckCircle2,
+  Phone,
+  MessageCircle,
+  Upload,
+  X,
+  Calendar,
+  MapPin,
+  Clock,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const categories = [
@@ -21,6 +33,19 @@ const subServices: Record<string, string[]> = {
   repair: ["Refrigerator Servicing", "Air Conditioner Servicing", "Television Repair", "Home & Office Electronics Maintenance"],
 };
 
+// Categories that benefit from file upload
+const uploadCategories = ["repair", "buying"];
+// Categories that benefit from address
+const addressCategories = ["accommodation", "repair", "buying", "tour"];
+// Categories that benefit from date/time
+const dateCategories = ["accommodation", "concierge", "tour", "repair"];
+
+interface UploadedFile {
+  name: string;
+  size: number;
+  previewUrl?: string;
+}
+
 interface BookingFormProps {
   initialCategory?: string | null;
 }
@@ -29,16 +54,24 @@ export default function BookingForm({ initialCategory = null }: BookingFormProps
   const [step, setStep] = useState(initialCategory ? 2 : 1);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(initialCategory);
   const [selectedSubServices, setSelectedSubServices] = useState<string[]>([]);
-  
+
   // Step 3 state
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
+  const [preferredDate, setPreferredDate] = useState("");
+  const [preferredTime, setPreferredTime] = useState("");
   const [notes, setNotes] = useState("");
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     if (initialCategory) {
       setSelectedCategory(initialCategory);
-      setSelectedSubServices([]); // Reset sub-services
+      setSelectedSubServices([]);
       setStep(2);
     }
   }, [initialCategory]);
@@ -46,22 +79,15 @@ export default function BookingForm({ initialCategory = null }: BookingFormProps
   useEffect(() => {
     const handleSelectCategory = (e: Event) => {
       const customEvent = e as CustomEvent<{ categoryId: string }>;
-      if (customEvent.detail && customEvent.detail.categoryId) {
+      if (customEvent.detail?.categoryId) {
         setSelectedCategory(customEvent.detail.categoryId);
-        setSelectedSubServices([]); // Reset sub-services on category change
-        setStep(2); // Advance directly to selection
-        
-        const element = document.getElementById("booking");
-        if (element) {
-          element.scrollIntoView({ behavior: "smooth" });
-        }
+        setSelectedSubServices([]);
+        setStep(2);
+        document.getElementById("booking")?.scrollIntoView({ behavior: "smooth" });
       }
     };
-
     window.addEventListener("select-booking-category", handleSelectCategory);
-    return () => {
-      window.removeEventListener("select-booking-category", handleSelectCategory);
-    };
+    return () => window.removeEventListener("select-booking-category", handleSelectCategory);
   }, []);
 
   const toggleSubService = (service: string) => {
@@ -72,8 +98,6 @@ export default function BookingForm({ initialCategory = null }: BookingFormProps
 
   const nextStep = () => setStep((s) => Math.min(s + 1, 3));
   const prevStep = () => setStep((s) => Math.max(s - 1, 1));
-
-  const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,12 +111,54 @@ export default function BookingForm({ initialCategory = null }: BookingFormProps
     setSelectedSubServices([]);
     setName("");
     setPhone("");
+    setAddress("");
+    setPreferredDate("");
+    setPreferredTime("");
     setNotes("");
+    setUploadedFiles([]);
+  };
+
+  // File handling (mock — no real upload)
+  const handleFiles = (files: FileList | null) => {
+    if (!files) return;
+    const newFiles: UploadedFile[] = Array.from(files)
+      .slice(0, 5 - uploadedFiles.length)
+      .map((file) => ({
+        name: file.name,
+        size: file.size,
+        previewUrl: file.type.startsWith("image/") ? URL.createObjectURL(file) : undefined,
+      }));
+    setUploadedFiles((prev) => [...prev, ...newFiles].slice(0, 5));
+  };
+
+  const removeFile = (index: number) => {
+    setUploadedFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+  const handleDragLeave = () => setIsDragging(false);
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    handleFiles(e.dataTransfer.files);
   };
 
   const canProceedToStep2 = selectedCategory !== null;
   const canProceedToStep3 = selectedSubServices.length > 0;
   const canSubmit = name.trim() !== "" && phone.trim() !== "";
+
+  const showAddress = selectedCategory && addressCategories.includes(selectedCategory);
+  const showDate = selectedCategory && dateCategories.includes(selectedCategory);
+  const showUpload = selectedCategory && uploadCategories.includes(selectedCategory);
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1048576) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / 1048576).toFixed(1)} MB`;
+  };
 
   return (
     <section id="booking" className="bg-slate-900 py-24 sm:py-32">
@@ -102,12 +168,12 @@ export default function BookingForm({ initialCategory = null }: BookingFormProps
             Book a Service
           </h2>
           <p className="mt-4 text-lg text-slate-400">
-            Tell us what you need, and we'll take care of the rest.
+            Tell us what you need, and we&apos;ll take care of the rest.
           </p>
         </div>
 
         <div className="relative overflow-hidden rounded-3xl bg-slate-800 p-6 shadow-2xl sm:p-12 border border-slate-700">
-          {/* Inline Success State */}
+          {/* Success State */}
           <AnimatePresence>
             {submitted && (
               <motion.div
@@ -134,29 +200,42 @@ export default function BookingForm({ initialCategory = null }: BookingFormProps
               </motion.div>
             )}
           </AnimatePresence>
+
           {/* Progress Indicator */}
-          <div className="mb-8 flex items-center justify-between">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="flex flex-col items-center">
-                <div
-                  className={cn(
-                    "flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold transition-colors duration-300",
-                    step >= i ? "bg-teal-500 text-white" : "bg-slate-700 text-slate-400"
-                  )}
-                >
-                  {step > i ? <Check className="h-5 w-5" /> : i}
+          <div className="mb-10 flex items-center">
+            {[1, 2, 3].map((i, idx) => (
+              <React.Fragment key={i}>
+                <div className="flex flex-col items-center">
+                  <div
+                    className={cn(
+                      "flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold transition-colors duration-300",
+                      step > i
+                        ? "bg-teal-500 text-white"
+                        : step === i
+                        ? "bg-teal-600 text-white ring-4 ring-teal-500/20"
+                        : "bg-slate-700 text-slate-400"
+                    )}
+                  >
+                    {step > i ? <Check className="h-5 w-5" /> : i}
+                  </div>
+                  <span className="mt-2 hidden text-xs font-medium text-slate-400 sm:block">
+                    {i === 1 ? "Category" : i === 2 ? "Services" : "Details"}
+                  </span>
                 </div>
-                <span className="mt-2 hidden text-xs font-medium text-slate-400 sm:block">
-                  {i === 1 ? "Category" : i === 2 ? "Services" : "Details"}
-                </span>
-              </div>
+                {idx < 2 && (
+                  <div
+                    className={cn(
+                      "flex-1 h-0.5 mx-2 transition-colors duration-500",
+                      step > i ? "bg-teal-500" : "bg-slate-700"
+                    )}
+                  />
+                )}
+              </React.Fragment>
             ))}
-            {/* Connecting lines */}
-            <div className="absolute left-[calc(16%+1.25rem)] top-[2.25rem] -z-10 h-0.5 w-[calc(34%-2.5rem)] bg-slate-700 sm:top-[2.75rem]" />
-            <div className="absolute right-[calc(16%+1.25rem)] top-[2.25rem] -z-10 h-0.5 w-[calc(34%-2.5rem)] bg-slate-700 sm:top-[2.75rem]" />
           </div>
 
           <AnimatePresence mode="wait">
+            {/* ── Step 1: Category ── */}
             {step === 1 && (
               <motion.div
                 key="step1"
@@ -172,7 +251,7 @@ export default function BookingForm({ initialCategory = null }: BookingFormProps
                       key={category.id}
                       onClick={() => {
                         setSelectedCategory(category.id);
-                        setSelectedSubServices([]); // Reset sub-services on category change
+                        setSelectedSubServices([]);
                       }}
                       className={cn(
                         "flex items-center justify-between rounded-xl border p-4 text-left transition-all",
@@ -184,7 +263,7 @@ export default function BookingForm({ initialCategory = null }: BookingFormProps
                       <span className={cn("font-medium", selectedCategory === category.id ? "text-teal-400" : "text-slate-300")}>
                         {category.label}
                       </span>
-                      {selectedCategory === category.id && <Check className="h-5 w-5 text-teal-500" />}
+                      {selectedCategory === category.id && <Check className="h-5 w-5 text-teal-500 shrink-0" />}
                     </button>
                   ))}
                 </div>
@@ -192,7 +271,7 @@ export default function BookingForm({ initialCategory = null }: BookingFormProps
                   <button
                     onClick={nextStep}
                     disabled={!canProceedToStep2}
-                    className="flex items-center gap-2 rounded-lg bg-teal-600 px-6 py-3 font-semibold text-white transition-all hover:bg-teal-500 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-teal-600"
+                    className="flex items-center gap-2 rounded-lg bg-teal-600 px-6 py-3 font-semibold text-white transition-all hover:bg-teal-500 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     Next Step <ChevronRight className="h-4 w-4" />
                   </button>
@@ -200,6 +279,7 @@ export default function BookingForm({ initialCategory = null }: BookingFormProps
               </motion.div>
             )}
 
+            {/* ── Step 2: Sub-services ── */}
             {step === 2 && (
               <motion.div
                 key="step2"
@@ -254,7 +334,7 @@ export default function BookingForm({ initialCategory = null }: BookingFormProps
                   <button
                     onClick={nextStep}
                     disabled={!canProceedToStep3}
-                    className="flex items-center gap-2 rounded-lg bg-teal-600 px-6 py-3 font-semibold text-white transition-all hover:bg-teal-500 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-teal-600"
+                    className="flex items-center gap-2 rounded-lg bg-teal-600 px-6 py-3 font-semibold text-white transition-all hover:bg-teal-500 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     Next Step <ChevronRight className="h-4 w-4" />
                   </button>
@@ -262,6 +342,7 @@ export default function BookingForm({ initialCategory = null }: BookingFormProps
               </motion.div>
             )}
 
+            {/* ── Step 3: Details ── */}
             {step === 3 && (
               <motion.div
                 key="step3"
@@ -271,50 +352,174 @@ export default function BookingForm({ initialCategory = null }: BookingFormProps
                 transition={{ duration: 0.3 }}
               >
                 <h3 className="mb-6 text-xl font-semibold text-white">Your Details</h3>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div>
-                    <label htmlFor="name" className="mb-2 block text-sm font-medium text-slate-300">
-                      Full Name *
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      required
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className="w-full rounded-lg border border-slate-600 bg-slate-900/50 px-4 py-3 text-white placeholder-slate-500 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-                      placeholder="John Doe"
-                    />
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  {/* Name & Phone — always shown */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div>
+                      <label htmlFor="name" className="mb-2 block text-sm font-medium text-slate-300">
+                        Full Name <span className="text-teal-400">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        id="name"
+                        required
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="w-full rounded-lg border border-slate-600 bg-slate-900/50 px-4 py-3 text-white placeholder-slate-500 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 transition-colors"
+                        placeholder="Your Full Name"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="phone" className="mb-2 block text-sm font-medium text-slate-300">
+                        Phone Number <span className="text-teal-400">*</span>
+                      </label>
+                      <input
+                        type="tel"
+                        id="phone"
+                        required
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        className="w-full rounded-lg border border-slate-600 bg-slate-900/50 px-4 py-3 text-white placeholder-slate-500 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 transition-colors"
+                        placeholder="+880 1XX XXX XXXX"
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <label htmlFor="phone" className="mb-2 block text-sm font-medium text-slate-300">
-                      Phone Number *
-                    </label>
-                    <input
-                      type="tel"
-                      id="phone"
-                      required
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      className="w-full rounded-lg border border-slate-600 bg-slate-900/50 px-4 py-3 text-white placeholder-slate-500 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-                      placeholder="+880 1XX XXX XXXX"
-                    />
-                  </div>
+
+                  {/* Address — conditional */}
+                  {showAddress && (
+                    <div>
+                      <label htmlFor="address" className="mb-2 flex items-center gap-1.5 text-sm font-medium text-slate-300">
+                        <MapPin className="h-4 w-4 text-slate-400" /> Location / Address
+                      </label>
+                      <input
+                        type="text"
+                        id="address"
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
+                        className="w-full rounded-lg border border-slate-600 bg-slate-900/50 px-4 py-3 text-white placeholder-slate-500 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 transition-colors"
+                        placeholder="e.g., Road 3, Block A, Bashundhara R/A"
+                      />
+                    </div>
+                  )}
+
+                  {/* Date & Time — conditional */}
+                  {showDate && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                      <div>
+                        <label htmlFor="preferred-date" className="mb-2 flex items-center gap-1.5 text-sm font-medium text-slate-300">
+                          <Calendar className="h-4 w-4 text-slate-400" /> Preferred Date
+                        </label>
+                        <input
+                          type="date"
+                          id="preferred-date"
+                          value={preferredDate}
+                          min={new Date().toISOString().split("T")[0]}
+                          onChange={(e) => setPreferredDate(e.target.value)}
+                          className="w-full rounded-lg border border-slate-600 bg-slate-900/50 px-4 py-3 text-white placeholder-slate-500 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 transition-colors [color-scheme:dark]"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="preferred-time" className="mb-2 flex items-center gap-1.5 text-sm font-medium text-slate-300">
+                          <Clock className="h-4 w-4 text-slate-400" /> Preferred Time
+                        </label>
+                        <select
+                          id="preferred-time"
+                          value={preferredTime}
+                          onChange={(e) => setPreferredTime(e.target.value)}
+                          className="w-full rounded-lg border border-slate-600 bg-slate-900/50 px-4 py-3 text-white focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 transition-colors"
+                        >
+                          <option value="" className="bg-slate-800">Select a time slot</option>
+                          <option value="morning" className="bg-slate-800">Morning (8 AM – 12 PM)</option>
+                          <option value="afternoon" className="bg-slate-800">Afternoon (12 PM – 5 PM)</option>
+                          <option value="evening" className="bg-slate-800">Evening (5 PM – 9 PM)</option>
+                          <option value="flexible" className="bg-slate-800">Flexible / Any time</option>
+                        </select>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Notes */}
                   <div>
                     <label htmlFor="notes" className="mb-2 block text-sm font-medium text-slate-300">
-                      Additional Notes (Optional)
+                      Additional Notes <span className="text-slate-500 font-normal">(Optional)</span>
                     </label>
                     <textarea
                       id="notes"
-                      rows={4}
+                      rows={3}
                       value={notes}
                       onChange={(e) => setNotes(e.target.value)}
-                      className="w-full rounded-lg border border-slate-600 bg-slate-900/50 px-4 py-3 text-white placeholder-slate-500 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
+                      className="w-full rounded-lg border border-slate-600 bg-slate-900/50 px-4 py-3 text-white placeholder-slate-500 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 transition-colors resize-none"
                       placeholder="Tell us more about what you need..."
                     />
                   </div>
+
+                  {/* File Upload — conditional */}
+                  {showUpload && (
+                    <div>
+                      <label className="mb-2 flex items-center gap-1.5 text-sm font-medium text-slate-300">
+                        <Upload className="h-4 w-4 text-slate-400" /> Upload Photos{" "}
+                        <span className="text-slate-500 font-normal">(Optional, up to 5)</span>
+                      </label>
+                      <div
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                        onDrop={handleDrop}
+                        onClick={() => fileInputRef.current?.click()}
+                        className={cn(
+                          "relative flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed cursor-pointer p-6 transition-all duration-200",
+                          isDragging
+                            ? "border-teal-400 bg-teal-500/10"
+                            : "border-slate-600 hover:border-slate-400 bg-slate-900/30"
+                        )}
+                      >
+                        <Upload className="h-8 w-8 text-slate-500" />
+                        <p className="text-sm text-slate-400 text-center">
+                          <span className="font-semibold text-teal-400">Click to upload</span> or drag & drop
+                        </p>
+                        <p className="text-xs text-slate-500">PNG, JPG, HEIC up to 10 MB each</p>
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          className="sr-only"
+                          onChange={(e) => handleFiles(e.target.files)}
+                        />
+                      </div>
+
+                      {/* Uploaded file previews */}
+                      {uploadedFiles.length > 0 && (
+                        <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-2">
+                          {uploadedFiles.map((file, i) => (
+                            <div key={i} className="relative group rounded-lg overflow-hidden border border-slate-700 bg-slate-900/50">
+                              {file.previewUrl ? (
+                                <img src={file.previewUrl} alt={file.name} className="w-full h-20 object-cover" />
+                              ) : (
+                                <div className="w-full h-20 flex items-center justify-center bg-slate-800">
+                                  <Upload className="h-6 w-6 text-slate-500" />
+                                </div>
+                              )}
+                              <div className="px-2 py-1">
+                                <p className="text-xs text-slate-400 truncate">{file.name}</p>
+                                <p className="text-xs text-slate-500">{formatFileSize(file.size)}</p>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => removeFile(i)}
+                                className="absolute top-1 right-1 rounded-full bg-black/60 p-0.5 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                                aria-label="Remove file"
+                              >
+                                <X className="h-3.5 w-3.5" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   {/* Inline support CTA */}
-                  <div className="mt-6 flex flex-wrap items-center justify-center gap-3 rounded-2xl bg-slate-900/50 border border-slate-700 p-4">
+                  <div className="mt-2 flex flex-wrap items-center justify-center gap-3 rounded-2xl bg-slate-900/50 border border-slate-700 p-4">
                     <p className="text-xs text-slate-500 mr-1">Prefer to talk directly?</p>
                     <a
                       href="https://wa.me/8801700000000"
@@ -332,7 +537,7 @@ export default function BookingForm({ initialCategory = null }: BookingFormProps
                     </a>
                   </div>
 
-                  <div className="mt-6 flex justify-between pt-4 border-t border-slate-700">
+                  <div className="flex justify-between pt-4 border-t border-slate-700">
                     <button
                       type="button"
                       onClick={prevStep}
@@ -343,7 +548,7 @@ export default function BookingForm({ initialCategory = null }: BookingFormProps
                     <button
                       type="submit"
                       disabled={!canSubmit}
-                      className="flex items-center gap-2 rounded-lg bg-teal-600 px-8 py-3 font-semibold text-white transition-all hover:bg-teal-500 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-teal-600 shadow-[0_0_20px_rgba(20,184,166,0.3)] hover:shadow-[0_0_30px_rgba(20,184,166,0.5)]"
+                      className="flex items-center gap-2 rounded-lg bg-teal-600 px-8 py-3 font-semibold text-white transition-all hover:bg-teal-500 disabled:cursor-not-allowed disabled:opacity-50 shadow-[0_0_20px_rgba(20,184,166,0.3)] hover:shadow-[0_0_30px_rgba(20,184,166,0.5)]"
                     >
                       Submit Request
                     </button>

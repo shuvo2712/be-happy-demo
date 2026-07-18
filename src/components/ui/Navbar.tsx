@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Phone } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 const navLinks = [
   { name: "Home", href: "/" },
@@ -53,9 +54,16 @@ export default function Navbar() {
               window.scrollTo({ top: 0, behavior: "smooth" });
             }
           }}
-          className="text-2xl font-bold tracking-tight text-white transition-colors"
+          className="flex items-center gap-3 text-2xl font-bold tracking-tight text-white transition-colors"
         >
-          Be Happy
+          <Image
+            src="/images/logo-nobg.png"
+            alt="Be Happy Logo"
+            width={40}
+            height={40}
+            className="h-10 w-10 object-contain"
+          />
+          <span>Be Happy</span>
         </Link>
       </div>
 

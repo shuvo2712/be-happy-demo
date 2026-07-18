@@ -6,18 +6,30 @@ import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion"
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 
-const places = ["Bashundhara", "Gulshan", "Banani", "Uttara", "Dhanmondi"];
+const places = ["Bashundhara", "Gulshan", "Banani", "Uttara", "Dhanmondi", "Mirpur"];
+
+const backgrounds = [
+  "/hero-bg.png",
+  "/images/hero-slides/accommodation.png",
+  "/images/hero-slides/concierge.png",
+  "/images/hero-slides/tour_guide.png",
+  "/images/hero-slides/repair.png",
+  "/images/hero-slides/buying.png"
+];
 
 export default function HeroSection() {
   const [placeIndex, setPlaceIndex] = useState(0);
+  const [bgIndex, setBgIndex] = useState(0);
   const { scrollY } = useScroll();
 
   useEffect(() => {
-    // Select a random starting place on client-side mount
+    // Select a random starting place and bg on client-side mount
     setPlaceIndex(Math.floor(Math.random() * places.length));
+    setBgIndex(Math.floor(Math.random() * backgrounds.length));
 
     const interval = setInterval(() => {
       setPlaceIndex((prev) => (prev + 1) % places.length);
+      setBgIndex((prev) => (prev + 1) % backgrounds.length);
     }, 2000);
     return () => clearInterval(interval);
   }, []);
@@ -30,19 +42,30 @@ export default function HeroSection() {
     <section id="home" className="relative flex min-h-[80vh] flex-col items-center justify-center overflow-hidden bg-slate-900 px-6 py-24 text-center text-white sm:px-12">
       {/* Background Image Container with Parallax styling */}
       <motion.div 
-        className="absolute inset-0 z-0 h-[120%] -top-[10%]"
+        className="absolute inset-0 z-0 h-[120%] -top-[10%] overflow-hidden"
         style={{ y, opacity }}
       >
-        <Image 
-          src="/hero-bg.png" 
-          alt="Dhaka City Skyline at Dusk" 
-          fill
-          priority
-          className="object-cover"
-        />
+        <AnimatePresence mode="popLayout">
+          <motion.div
+            key={bgIndex}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1 }}
+            className="absolute inset-0"
+          >
+            <Image 
+              src={backgrounds[bgIndex]} 
+              alt="Dhaka City and Lifestyle" 
+              fill
+              priority
+              className="object-cover"
+            />
+          </motion.div>
+        </AnimatePresence>
         {/* Overlays for text readability and smooth blending */}
-        <div className="absolute inset-0 bg-slate-900/70" />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/30 to-transparent" />
+        <div className="absolute inset-0 bg-slate-900/70 z-10" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/30 to-transparent z-10" />
       </motion.div>
       
       <div className="relative z-10 flex max-w-4xl flex-col items-center gap-6">

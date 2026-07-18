@@ -5,6 +5,7 @@ export interface PricingTier {
   bdtPrice: string;
   usdApprox: string;
   features: string[];
+  isPopular?: boolean;
 }
 
 export interface Testimonial {
@@ -19,6 +20,12 @@ export interface FAQ {
   answer: string;
 }
 
+export interface ProcessStep {
+  step: number;
+  title: string;
+  description: string;
+}
+
 export interface ServiceType {
   id: string;
   title: string;
@@ -29,7 +36,9 @@ export interface ServiceType {
   note?: string;
   items: string[];
   heroImage: string;
-  pricing: PricingTier;
+  galleryImages: string[];
+  pricingTiers: PricingTier[];
+  process: ProcessStep[];
   testimonials: Testimonial[];
   faqs: FAQ[];
   whatsappNumber: string;
@@ -45,25 +54,73 @@ export const servicesData: ServiceType[] = [
       "Relocating or setting up in Dhaka can be overwhelming. Our expert team handles the entire process — from scouting premium apartments in Gulshan and Banani to finding the ideal co-working space or private office. We negotiate on your behalf and ensure everything is move-in ready.",
     iconName: "Home",
     buttonText: "Find Your Space",
-    heroImage:
-      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1600&q=80&fit=crop",
+    heroImage: "/images/hero-slides/accommodation.png",
+    galleryImages: [
+      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80",
+      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&q=80",
+      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80",
+      "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800&q=80",
+      "https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=800&q=80",
+      "https://images.unsplash.com/photo-1554995207-c18c203602cb?w=800&q=80",
+    ],
     items: [
       "Apartment Finding Assistance",
       "Office Space Finding Assistance",
       "Relocation Support",
     ],
-    pricing: {
-      label: "Starting From",
-      bdtPrice: "৳ 5,000",
-      usdApprox: "≈ $45 USD",
-      features: [
-        "Dedicated housing consultant",
-        "Up to 10 shortlisted properties",
-        "Landlord negotiation support",
-        "Contract review assistance",
-        "Move-in coordination",
-      ],
-    },
+    process: [
+      {
+        step: 1,
+        title: "Share Your Requirements",
+        description:
+          "Tell us your budget, preferred neighborhood, and must-have features. The more detail, the better we can match.",
+      },
+      {
+        step: 2,
+        title: "We Scout & Shortlist",
+        description:
+          "Our local team searches available properties and shortlists the top options for you within 48–72 hours.",
+      },
+      {
+        step: 3,
+        title: "View & Choose",
+        description:
+          "We arrange viewings at your convenience — in person or via video call. You choose your perfect space.",
+      },
+      {
+        step: 4,
+        title: "We Handle the Rest",
+        description:
+          "From negotiation and contract review to move-in coordination, we handle every detail so you don't have to.",
+      },
+    ],
+    pricingTiers: [
+      {
+        label: "Basic",
+        bdtPrice: "৳5,000",
+        usdApprox: "≈ $45 USD",
+        features: [
+          "Dedicated housing consultant",
+          "Up to 5 shortlisted properties",
+          "Landlord negotiation support",
+          "Email & WhatsApp support",
+        ],
+      },
+      {
+        label: "Premium",
+        bdtPrice: "৳9,000",
+        usdApprox: "≈ $82 USD",
+        isPopular: true,
+        features: [
+          "Senior dedicated consultant",
+          "Up to 15 shortlisted properties",
+          "Landlord negotiation support",
+          "Contract review assistance",
+          "Move-in coordination",
+          "Priority 24/7 support",
+        ],
+      },
+    ],
     testimonials: [
       {
         name: "James R.",
@@ -120,8 +177,15 @@ export const servicesData: ServiceType[] = [
       "Life in Dhaka moves fast. Our white-glove concierge service ensures you're always ahead — with hotel bookings, flight arrangements, professional drivers on standby, and even help finding the perfect housemate. Consider us your personal assistant in Dhaka.",
     iconName: "Briefcase",
     buttonText: "Request Concierge",
-    heroImage:
-      "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1600&q=80&fit=crop",
+    heroImage: "/images/hero-slides/concierge.png",
+    galleryImages: [
+      "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80",
+      "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&q=80",
+      "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800&q=80",
+      "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800&q=80",
+      "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&q=80",
+      "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800&q=80",
+    ],
     items: [
       "Hotel Reservations",
       "Flight Bookings",
@@ -129,18 +193,59 @@ export const servicesData: ServiceType[] = [
       "Rent-a-Car Services",
       "Housemate Finding Assistance",
     ],
-    pricing: {
-      label: "Starting From",
-      bdtPrice: "৳ 2,500",
-      usdApprox: "≈ $23 USD",
-      features: [
-        "Dedicated concierge agent",
-        "24/7 booking assistance",
-        "Professional, vetted drivers",
-        "Airport pick-up & drop-off",
-        "Housemate matching service",
-      ],
-    },
+    process: [
+      {
+        step: 1,
+        title: "Send Us Your Request",
+        description:
+          "Contact us via WhatsApp or our form. Tell us what you need — hotel, driver, flight, or anything else.",
+      },
+      {
+        step: 2,
+        title: "We Confirm Options",
+        description:
+          "Our concierge team researches the best options and presents you with curated choices quickly.",
+      },
+      {
+        step: 3,
+        title: "You Approve",
+        description:
+          "Choose your preferred option. We handle all the booking, coordination, and confirmations.",
+      },
+      {
+        step: 4,
+        title: "Sit Back & Enjoy",
+        description:
+          "Your arrangements are made. We stay available for any last-minute changes or additional needs.",
+      },
+    ],
+    pricingTiers: [
+      {
+        label: "Standard",
+        bdtPrice: "৳2,500",
+        usdApprox: "≈ $23 USD",
+        features: [
+          "Dedicated concierge agent",
+          "Booking assistance",
+          "Vetted drivers",
+          "Airport transfer",
+        ],
+      },
+      {
+        label: "Executive",
+        bdtPrice: "৳5,000",
+        usdApprox: "≈ $45 USD",
+        isPopular: true,
+        features: [
+          "Senior concierge agent",
+          "24/7 booking assistance",
+          "Professional vetted drivers",
+          "Airport pick-up & drop-off",
+          "Housemate matching service",
+          "Priority response",
+        ],
+      },
+    ],
     testimonials: [
       {
         name: "Priya S.",
@@ -197,26 +302,74 @@ export const servicesData: ServiceType[] = [
       "Dhaka has layers that only a local truly understands. Our experienced, bilingual tour guides take you beyond the tourist spots — into vibrant local markets, historic neighborhoods, and the real heartbeat of the city. Perfect for business visitors and curious travelers alike.",
     iconName: "Map",
     buttonText: "Book a Guide",
-    heroImage:
-      "https://images.unsplash.com/photo-1530521954074-e64f6810b32d?w=1600&q=80&fit=crop",
+    heroImage: "/images/hero-slides/tour_guide.png",
+    galleryImages: [
+      "https://images.unsplash.com/photo-1530521954074-e64f6810b32d?w=800&q=80",
+      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80",
+      "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=800&q=80",
+      "https://images.unsplash.com/photo-1527631746610-bca00a040d60?w=800&q=80",
+      "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=800&q=80",
+      "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&q=80",
+    ],
     items: [
       "Hourly-Based Tour Guide Service",
       "Business Visitor Assistance",
       "City Tours & Local Experience",
       "Flexible Schedule at Competitive Rates",
     ],
-    pricing: {
-      label: "Starting From",
-      bdtPrice: "৳ 1,500",
-      usdApprox: "≈ $14 USD",
-      features: [
-        "Minimum 2-hour booking",
-        "Bilingual guide (English & Bengali)",
-        "Custom route planning",
-        "Local restaurant recommendations",
-        "Business district orientation tours",
-      ],
-    },
+    process: [
+      {
+        step: 1,
+        title: "Tell Us Your Interests",
+        description:
+          "Share what you want to see — historic sites, food markets, business districts, or hidden local gems.",
+      },
+      {
+        step: 2,
+        title: "We Match a Guide",
+        description:
+          "We assign the ideal bilingual guide based on your interests, schedule, and group size.",
+      },
+      {
+        step: 3,
+        title: "Plan Your Route",
+        description:
+          "Your guide contacts you to finalize the custom route, timing, and any special requests.",
+      },
+      {
+        step: 4,
+        title: "Explore Dhaka",
+        description:
+          "Meet your guide and discover Dhaka like a local — stress-free, informed, and fully immersed.",
+      },
+    ],
+    pricingTiers: [
+      {
+        label: "Half Day",
+        bdtPrice: "৳1,500",
+        usdApprox: "≈ $14 USD",
+        features: [
+          "Minimum 2-hour booking",
+          "Bilingual guide (English & Bengali)",
+          "Up to 3 locations",
+          "Local restaurant tips",
+        ],
+      },
+      {
+        label: "Full Day",
+        bdtPrice: "৳3,000",
+        usdApprox: "≈ $27 USD",
+        isPopular: true,
+        features: [
+          "6–8 hour full-day tour",
+          "Bilingual guide (English & Bengali)",
+          "Custom route planning",
+          "Local restaurant recommendations",
+          "Business district orientation",
+          "Flexible schedule",
+        ],
+      },
+    ],
     testimonials: [
       {
         name: "Thomas H.",
@@ -274,21 +427,70 @@ export const servicesData: ServiceType[] = [
     iconName: "ShoppingBag",
     note: "Fast Evaluation • Fair Price • Immediate Cash Payment",
     buttonText: "Get an Offer",
-    heroImage:
-      "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=1600&q=80&fit=crop",
+    heroImage: "/images/hero-slides/buying.png",
+    galleryImages: [
+      "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80",
+      "https://images.unsplash.com/photo-1593640408182-31c228b42e0e?w=800&q=80",
+      "https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=800&q=80",
+      "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&q=80",
+      "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&q=80",
+      "https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=800&q=80",
+    ],
     items: ["Used Furniture", "Used Electronics", "Used Cars"],
-    pricing: {
-      label: "We Come to You",
-      bdtPrice: "Free Evaluation",
-      usdApprox: "No hidden fees",
-      features: [
-        "Home visit for evaluation",
-        "Fair market-rate pricing",
-        "Immediate cash payment",
-        "We handle transport & pickup",
-        "No commission or extra charges",
-      ],
-    },
+    process: [
+      {
+        step: 1,
+        title: "Tell Us What You Have",
+        description:
+          "Contact us with a list or photos of the items you want to sell. The more detail, the faster our evaluation.",
+      },
+      {
+        step: 2,
+        title: "We Schedule a Visit",
+        description:
+          "Our evaluator visits your home or office — usually within 24 hours — at a time that suits you.",
+      },
+      {
+        step: 3,
+        title: "Fair Valuation",
+        description:
+          "Our expert assesses each item honestly, based on condition and current market value. No pressure.",
+      },
+      {
+        step: 4,
+        title: "Instant Cash Payment",
+        description:
+          "If you agree with our offer, we pay cash on the spot and take care of all transport and pickup.",
+      },
+    ],
+    pricingTiers: [
+      {
+        label: "Single Item",
+        bdtPrice: "Free",
+        usdApprox: "No fee — we pay you",
+        features: [
+          "Home visit included",
+          "Fair market-rate valuation",
+          "Instant cash on acceptance",
+          "We handle transport",
+        ],
+        isPopular: false,
+      },
+      {
+        label: "Bulk / Full Clearance",
+        bdtPrice: "Free + Bonus",
+        usdApprox: "Extra 5% for 5+ items",
+        isPopular: true,
+        features: [
+          "Priority home visit",
+          "Fair market-rate valuation",
+          "Instant cash on acceptance",
+          "We handle all transport",
+          "5% bonus on bulk lots",
+          "Full apartment clearance",
+        ],
+      },
+    ],
     testimonials: [
       {
         name: "Claire T.",
@@ -345,26 +547,74 @@ export const servicesData: ServiceType[] = [
       "Keep your home and office running smoothly with our certified repair and maintenance specialists. From air conditioner servicing to refrigerator repairs and TV diagnostics, our technicians arrive promptly, diagnose quickly, and fix it right the first time.",
     iconName: "Wrench",
     buttonText: "Book a Repair",
-    heroImage:
-      "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=1600&q=80&fit=crop",
+    heroImage: "/images/hero-slides/repair.png",
+    galleryImages: [
+      "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=800&q=80",
+      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80",
+      "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800&q=80",
+      "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=800&q=80",
+      "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=800&q=80",
+      "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=800&q=80",
+    ],
     items: [
       "Refrigerator Servicing",
       "Air Conditioner Servicing",
       "Television Repair",
       "Home & Office Electronics Maintenance",
     ],
-    pricing: {
-      label: "Starting From",
-      bdtPrice: "৳ 800",
-      usdApprox: "≈ $7 USD",
-      features: [
-        "Certified, experienced technicians",
-        "Transparent pricing before work begins",
-        "Same-day or next-day service",
-        "Warranty on repairs",
-        "Genuine spare parts used",
-      ],
-    },
+    process: [
+      {
+        step: 1,
+        title: "Describe the Issue",
+        description:
+          "Tell us what appliance needs fixing and describe the problem. Photos or videos help us prepare the right tools.",
+      },
+      {
+        step: 2,
+        title: "Schedule a Technician",
+        description:
+          "We book a certified technician at your preferred time — same-day available before 12 PM.",
+      },
+      {
+        step: 3,
+        title: "Diagnosis & Quote",
+        description:
+          "The technician diagnoses the problem and provides a transparent, no-surprise quote before starting.",
+      },
+      {
+        step: 4,
+        title: "Fixed, Guaranteed",
+        description:
+          "We fix it right the first time. All repairs come with a 30-day warranty for your peace of mind.",
+      },
+    ],
+    pricingTiers: [
+      {
+        label: "Diagnosis Only",
+        bdtPrice: "৳400",
+        usdApprox: "≈ $4 USD",
+        features: [
+          "Certified technician visit",
+          "Full appliance diagnosis",
+          "Written quote provided",
+          "No obligation to proceed",
+        ],
+      },
+      {
+        label: "Full Repair",
+        bdtPrice: "৳800+",
+        usdApprox: "≈ $7 USD",
+        isPopular: true,
+        features: [
+          "Certified technician",
+          "Transparent pricing upfront",
+          "Same-day or next-day service",
+          "30-day repair warranty",
+          "Genuine spare parts",
+          "AC, Fridge, TV & more",
+        ],
+      },
+    ],
     testimonials: [
       {
         name: "Linda S.",

@@ -1,15 +1,16 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import Link from "next/link";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
-  ArrowLeft,
   CheckCircle2,
   Star,
   ChevronDown,
   Phone,
   MessageCircle,
-  Sparkles,
+  X,
+  ChevronLeft,
+  ChevronRight,
+  ZoomIn,
 } from "lucide-react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { iconMap, type ServiceType } from "@/lib/servicesData";
@@ -17,6 +18,8 @@ import BookingForm from "@/components/forms/BookingForm";
 import Footer from "@/components/sections/Footer";
 import Navbar from "@/components/ui/Navbar";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
+import AccommodationRedesign from "./AccommodationRedesign";
 
 /* ───────────── Fade-in on scroll ───────────── */
 function FadeInSection({
@@ -121,7 +124,6 @@ function TestimonialCarousel({ testimonials }: { testimonials: ServiceType["test
           transition={{ duration: 0.5 }}
           className="bg-slate-800 rounded-3xl p-8 border border-slate-700 shadow-xl"
         >
-          {/* Stars */}
           <div className="flex gap-1 mb-5">
             {Array.from({ length: testimonials[active].rating }).map((_, i) => (
               <Star key={i} className="h-5 w-5 fill-amber-400 text-amber-400" />
@@ -131,7 +133,7 @@ function TestimonialCarousel({ testimonials }: { testimonials: ServiceType["test
             ))}
           </div>
           <blockquote className="text-lg text-slate-200 leading-relaxed font-light italic mb-6">
-            "{testimonials[active].quote}"
+            &ldquo;{testimonials[active].quote}&rdquo;
           </blockquote>
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-full bg-teal-500/20 border border-teal-500/40 flex items-center justify-center text-teal-400 font-bold text-sm">
@@ -144,8 +146,6 @@ function TestimonialCarousel({ testimonials }: { testimonials: ServiceType["test
           </div>
         </motion.div>
       </AnimatePresence>
-
-      {/* Dots */}
       <div className="flex justify-center gap-2 mt-5">
         {testimonials.map((_, i) => (
           <button
@@ -163,8 +163,283 @@ function TestimonialCarousel({ testimonials }: { testimonials: ServiceType["test
   );
 }
 
+/* ───────────── Gallery Lightbox ───────────── */
+function GalleryLightbox({
+  images,
+  startIndex,
+  onClose,
+}: {
+  images: string[];
+  startIndex: number;
+  onClose: () => void;
+}) {
+  const [current, setCurrent] = useState(startIndex);
+
+  const prev = useCallback(() => setCurrent((c) => (c - 1 + images.length) % images.length), [images.length]);
+  const next = useCallback(() => setCurrent((c) => (c + 1) % images.length), [images.length]);
+
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowLeft") prev();
+      if (e.key === "ArrowRight") next();
+    };
+    document.addEventListener("keydown", handleKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", handleKey);
+      document.body.style.overflow = "";
+    };
+  }, [onClose, prev, next]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center"
+      onClick={onClose}
+    >
+      {/* Close */}
+      <button
+        className="absolute top-4 right-4 z-10 rounded-full bg-white/10 hover:bg-white/20 p-2.5 text-white transition-colors"
+        onClick={onClose}
+        aria-label="Close lightbox"
+      >
+        <X className="h-6 w-6" />
+      </button>
+
+      {/* Prev */}
+      <button
+        className="absolute left-4 z-10 rounded-full bg-white/10 hover:bg-white/20 p-2.5 text-white transition-colors"
+        onClick={(e) => { e.stopPropagation(); prev(); }}
+        aria-label="Previous image"
+      >
+        <ChevronLeft className="h-6 w-6" />
+      </button>
+
+      {/* Image */}
+      <div className="relative w-full max-w-4xl max-h-[85vh] mx-16" onClick={(e) => e.stopPropagation()}>
+        <AnimatePresence mode="wait">
+          <motion.img
+            key={current}
+            src={images[current]}
+            alt={`Gallery image ${current + 1}`}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.25 }}
+            className="w-full h-full object-contain rounded-xl max-h-[85vh]"
+          />
+        </AnimatePresence>
+      </div>
+
+      {/* Next */}
+      <button
+        className="absolute right-4 z-10 rounded-full bg-white/10 hover:bg-white/20 p-2.5 text-white transition-colors"
+        onClick={(e) => { e.stopPropagation(); next(); }}
+        aria-label="Next image"
+      >
+        <ChevronRight className="h-6 w-6" />
+      </button>
+
+      {/* Counter */}
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/60 text-sm">
+        {current + 1} / {images.length}
+      </div>
+    </motion.div>
+  );
+}
+
+/* ───────────── Masonry Gallery ───────────── */
+function MasonryGallery({ images }: { images: string[] }) {
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+
+  return (
+    <>
+      <div className="columns-2 md:columns-3 gap-3 space-y-3">
+        {images.map((src, i) => (
+          <FadeInSection key={i} delay={i * 60}>
+            <div
+              className="relative overflow-hidden rounded-xl cursor-pointer group break-inside-avoid"
+              onClick={() => setLightboxIndex(i)}
+            >
+              <img
+                src={src}
+                alt={`Gallery ${i + 1}`}
+                className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                style={{ aspectRatio: i % 3 === 1 ? "4/5" : "4/3" }}
+              />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300 flex items-center justify-center">
+                <ZoomIn className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 h-8 w-8" />
+              </div>
+            </div>
+          </FadeInSection>
+        ))}
+      </div>
+
+      <AnimatePresence>
+        {lightboxIndex !== null && (
+          <GalleryLightbox
+            images={images}
+            startIndex={lightboxIndex}
+            onClose={() => setLightboxIndex(null)}
+          />
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
+
+/* ───────────── Process Steps ───────────── */
+function ProcessSection({ steps }: { steps: ServiceType["process"] }) {
+  return (
+    <div className="relative">
+      {/* Vertical connector line on desktop */}
+      <div className="hidden md:block absolute left-[calc(50%-1px)] top-8 bottom-8 w-0.5 bg-gradient-to-b from-teal-500/60 via-teal-500/20 to-transparent" />
+
+      <div className="grid md:grid-cols-2 gap-6 md:gap-10">
+        {steps.map((step, i) => (
+          <FadeInSection key={step.step} delay={i * 100}>
+            <div
+              className={cn(
+                "relative flex gap-5 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-100 hover:shadow-md hover:ring-teal-500/20 transition-all duration-300",
+                i % 2 === 1 && "md:mt-8"
+              )}
+            >
+              {/* Step number bubble */}
+              <div className="flex-shrink-0 h-12 w-12 rounded-full bg-teal-500 text-white font-extrabold text-lg flex items-center justify-center shadow-[0_0_20px_rgba(20,184,166,0.3)]">
+                {step.step}
+              </div>
+              <div>
+                <h3 className="font-bold text-slate-900 mb-1">{step.title}</h3>
+                <p className="text-sm text-slate-500 leading-relaxed">{step.description}</p>
+              </div>
+            </div>
+          </FadeInSection>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ───────────── Pricing Tiers ───────────── */
+function PricingSection({
+  tiers,
+  buttonText,
+}: {
+  tiers: ServiceType["pricingTiers"];
+  buttonText: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "grid gap-6 mx-auto",
+        tiers.length === 1 ? "max-w-sm grid-cols-1" : "max-w-2xl grid-cols-1 sm:grid-cols-2"
+      )}
+    >
+      {tiers.map((tier, i) => (
+        <FadeInSection key={tier.label} delay={i * 120}>
+          <div
+            className={cn(
+              "relative rounded-3xl p-8 border shadow-xl overflow-hidden flex flex-col h-full transition-all duration-300 hover:-translate-y-1",
+              tier.isPopular
+                ? "bg-gradient-to-br from-slate-900 to-slate-800 border-teal-500/50 shadow-teal-500/10"
+                : "bg-gradient-to-br from-slate-800 to-slate-700 border-slate-600"
+            )}
+          >
+            {tier.isPopular && (
+              <div className="absolute top-4 right-4 rounded-full bg-teal-500 text-white text-xs font-bold px-3 py-1">
+                Most Popular
+              </div>
+            )}
+            {/* Glow */}
+            <div className="absolute top-0 right-0 h-32 w-32 bg-teal-500/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
+
+            <p className="text-xs font-bold uppercase tracking-widest text-teal-400 mb-4">
+              {tier.label}
+            </p>
+            <div className="mb-1">
+              <span className="text-4xl font-extrabold text-white tracking-tight">{tier.bdtPrice}</span>
+            </div>
+            <p className="text-sm text-slate-400 font-medium mb-6">{tier.usdApprox}</p>
+
+            <ul className="space-y-3 mb-8 flex-1">
+              {tier.features.map((feature, fi) => (
+                <li key={fi} className="flex items-center gap-3">
+                  <CheckCircle2 className="h-5 w-5 text-teal-400 shrink-0" />
+                  <span className="text-sm text-slate-300">{feature}</span>
+                </li>
+              ))}
+            </ul>
+
+            <a
+              href="#booking"
+              className={cn(
+                "block w-full text-center rounded-xl font-semibold py-3.5 transition-all duration-300",
+                tier.isPopular
+                  ? "bg-teal-600 hover:bg-teal-500 text-white shadow-[0_0_20px_rgba(20,184,166,0.3)] hover:shadow-[0_0_30px_rgba(20,184,166,0.5)]"
+                  : "border border-slate-500 hover:border-teal-500 text-slate-300 hover:text-white"
+              )}
+            >
+              {buttonText}
+            </a>
+          </div>
+        </FadeInSection>
+      ))}
+    </div>
+  );
+}
+
+/* ───────────── Sticky Mobile CTA ───────────── */
+function StickyMobileCTA({
+  service,
+}: {
+  service: ServiceType;
+}) {
+  const [visible, setVisible] = useState(false);
+  const popularTier = service.pricingTiers.find((t) => t.isPopular) ?? service.pricingTiers[0];
+
+  useEffect(() => {
+    const handler = () => setVisible(window.scrollY > 400);
+    window.addEventListener("scroll", handler, { passive: true });
+    return () => window.removeEventListener("scroll", handler);
+  }, []);
+
+  return (
+    <AnimatePresence>
+      {visible && (
+        <motion.div
+          initial={{ y: 80, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 80, opacity: 0 }}
+          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          // Sits above the mobile tab bar (72px) + safe area
+          className="fixed bottom-[72px] left-0 right-0 z-40 md:hidden px-4 pb-2"
+        >
+          <div className="bg-slate-900/95 backdrop-blur-md border border-teal-500/30 rounded-2xl shadow-2xl shadow-teal-500/10 flex items-center justify-between gap-3 px-4 py-3">
+            <div>
+              <p className="text-xs text-slate-400 font-medium">Starting from</p>
+              <p className="text-white font-bold text-lg leading-tight">{popularTier.bdtPrice}</p>
+            </div>
+            <a
+              href="#booking"
+              className="flex-shrink-0 rounded-xl bg-teal-600 hover:bg-teal-500 text-white text-sm font-bold px-5 py-2.5 transition-colors shadow-[0_0_15px_rgba(20,184,166,0.4)]"
+            >
+              Book Now
+            </a>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
 /* ───────────── Main Page ───────────── */
 export default function ServiceDetailClient({ service }: { service: ServiceType }) {
+  if (service.id === "accommodation") {
+    return <AccommodationRedesign service={service} />;
+  }
   const IconComponent = iconMap[service.iconName];
   const headerRef = useRef<HTMLElement>(null);
   const { scrollY } = useScroll();
@@ -179,11 +454,7 @@ export default function ServiceDetailClient({ service }: { service: ServiceType 
         ref={headerRef}
         className="relative bg-slate-900 pt-28 pb-20 sm:pt-40 sm:pb-28 overflow-hidden"
       >
-        {/* Parallax background image */}
-        <motion.div
-          style={{ y: bgY }}
-          className="absolute inset-0 scale-110"
-        >
+        <motion.div style={{ y: bgY }} className="absolute inset-0 scale-110">
           <div
             className="absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: `url(${service.heroImage})` }}
@@ -191,7 +462,6 @@ export default function ServiceDetailClient({ service }: { service: ServiceType 
           <div className="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-slate-900/70 to-slate-900" />
         </motion.div>
 
-        {/* Subtle dot grid overlay */}
         <div
           className="absolute inset-0 opacity-10"
           style={{
@@ -199,13 +469,10 @@ export default function ServiceDetailClient({ service }: { service: ServiceType 
             backgroundSize: "24px 24px",
           }}
         />
-        {/* Teal glow */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(20,184,166,0.15),transparent_60%)]" />
 
         <div className="relative mx-auto max-w-5xl px-6 lg:px-8">
-
           <div className="flex flex-row items-start gap-4 sm:gap-6 md:gap-10">
-            {/* Icon */}
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -227,13 +494,31 @@ export default function ServiceDetailClient({ service }: { service: ServiceType 
                 <p className="mt-4 text-sm sm:text-base md:text-lg text-slate-300 max-w-2xl leading-relaxed">
                   {service.longDescription}
                 </p>
+
+                {/* Quick CTA in header */}
+                <div className="mt-6 flex flex-wrap gap-3">
+                  <a
+                    href="#booking"
+                    className="inline-flex items-center gap-2 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-semibold px-5 py-2.5 text-sm transition-all duration-300 shadow-[0_0_20px_rgba(20,184,166,0.3)]"
+                  >
+                    {service.buttonText}
+                  </a>
+                  <a
+                    href={`https://wa.me/${service.whatsappNumber.replace(/\D/g, "")}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-xl border border-white/20 hover:border-white/40 text-white/80 hover:text-white font-semibold px-5 py-2.5 text-sm transition-all duration-300"
+                  >
+                    <MessageCircle className="h-4 w-4" /> WhatsApp Us
+                  </a>
+                </div>
               </motion.div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── What We Offer Checklist ── */}
+      {/* ── What We Offer ── */}
       <section className="bg-slate-50 py-20 sm:py-28">
         <div className="mx-auto max-w-5xl px-6 lg:px-8">
           <FadeInSection>
@@ -268,7 +553,47 @@ export default function ServiceDetailClient({ service }: { service: ServiceType 
         </div>
       </section>
 
-      {/* ── Pricing Card ── */}
+      {/* ── How It Works ── */}
+      <section className="bg-white py-20 sm:py-28">
+        <div className="mx-auto max-w-5xl px-6 lg:px-8">
+          <FadeInSection>
+            <div className="text-center mb-14">
+              <h2 className="text-xs font-bold uppercase tracking-widest text-teal-600 mb-3">
+                Simple Process
+              </h2>
+              <p className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+                How It Works
+              </p>
+              <p className="mt-4 text-slate-500 max-w-xl mx-auto">
+                Getting started is easy. Here&apos;s exactly what happens after you reach out.
+              </p>
+            </div>
+          </FadeInSection>
+          <ProcessSection steps={service.process} />
+        </div>
+      </section>
+
+      {/* ── Gallery ── */}
+      {service.galleryImages.length > 0 && (
+        <section className="bg-slate-50 py-20 sm:py-28">
+          <div className="mx-auto max-w-5xl px-6 lg:px-8">
+            <FadeInSection>
+              <div className="text-center mb-14">
+                <h2 className="text-xs font-bold uppercase tracking-widest text-teal-600 mb-3">
+                  Our Work
+                </h2>
+                <p className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+                  Photo Gallery
+                </p>
+                <p className="mt-4 text-slate-500">Click any image to view fullscreen.</p>
+              </div>
+            </FadeInSection>
+            <MasonryGallery images={service.galleryImages} />
+          </div>
+        </section>
+      )}
+
+      {/* ── Pricing ── */}
       <section className="bg-white py-20 sm:py-28">
         <div className="mx-auto max-w-5xl px-6 lg:px-8">
           <FadeInSection>
@@ -281,51 +606,7 @@ export default function ServiceDetailClient({ service }: { service: ServiceType 
               </p>
             </div>
           </FadeInSection>
-
-          <FadeInSection delay={100}>
-            <div className="mx-auto max-w-md">
-              <div className="relative rounded-3xl bg-gradient-to-br from-slate-900 to-slate-800 p-8 sm:p-10 border border-slate-700 shadow-2xl overflow-hidden">
-                {/* Teal glow accent */}
-                <div className="absolute top-0 right-0 h-40 w-40 bg-teal-500/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
-
-                <p className="text-xs font-bold uppercase tracking-widest text-teal-400 mb-4">
-                  {service.pricing.label}
-                </p>
-
-                {/* Dual currency */}
-                <div className="mb-2">
-                  <span className="text-5xl font-extrabold text-white tracking-tight">
-                    {service.pricing.bdtPrice}
-                  </span>
-                </div>
-                <div className="mb-6">
-                  <span className="text-sm text-slate-400 font-medium">
-                    {service.pricing.usdApprox}
-                  </span>
-                </div>
-                <p className="text-[10px] text-slate-500 mb-8 -mt-4">
-                  *USD price is approximate
-                </p>
-
-                {/* Features */}
-                <ul className="space-y-3 mb-8">
-                  {service.pricing.features.map((feature, i) => (
-                    <li key={i} className="flex items-center gap-3">
-                      <CheckCircle2 className="h-5 w-5 text-teal-400 shrink-0" />
-                      <span className="text-sm text-slate-300">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <a
-                  href="#booking"
-                  className="block w-full text-center rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-semibold py-3.5 transition-all duration-300 shadow-[0_0_20px_rgba(20,184,166,0.3)] hover:shadow-[0_0_30px_rgba(20,184,166,0.5)]"
-                >
-                  {service.buttonText}
-                </a>
-              </div>
-            </div>
-          </FadeInSection>
+          <PricingSection tiers={service.pricingTiers} buttonText={service.buttonText} />
         </div>
       </section>
 
@@ -342,7 +623,6 @@ export default function ServiceDetailClient({ service }: { service: ServiceType 
               </p>
             </div>
           </FadeInSection>
-
           <FadeInSection delay={100}>
             <div className="mx-auto max-w-2xl">
               <TestimonialCarousel testimonials={service.testimonials} />
@@ -364,7 +644,6 @@ export default function ServiceDetailClient({ service }: { service: ServiceType 
               </p>
             </div>
           </FadeInSection>
-
           <div className="space-y-3">
             {service.faqs.map((faq, i) => (
               <FAQItem key={i} question={faq.question} answer={faq.answer} index={i} />
@@ -410,6 +689,9 @@ export default function ServiceDetailClient({ service }: { service: ServiceType 
 
       {/* ── Footer ── */}
       <Footer />
+
+      {/* ── Sticky Mobile CTA ── */}
+      <StickyMobileCTA service={service} />
     </div>
   );
 }

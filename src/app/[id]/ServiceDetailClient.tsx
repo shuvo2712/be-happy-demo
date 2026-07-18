@@ -22,6 +22,8 @@ import Image from "next/image";
 import AccommodationRedesign from "./AccommodationRedesign";
 import ConciergeRedesign from "./ConciergeRedesign";
 import TourRedesign from "./TourRedesign";
+import BuyingRedesign from "./BuyingRedesign";
+import RepairRedesign from "./RepairRedesign";
 
 /* ───────────── Fade-in on scroll ───────────── */
 function FadeInSection({
@@ -447,6 +449,12 @@ export default function ServiceDetailClient({ service }: { service: ServiceType 
   }
   if (service.id === "tour") {
     return <TourRedesign service={service} />;
+  }
+  if (service.id === "buying") {
+    return <BuyingRedesign service={service} />;
+  }
+  if (service.id === "repair") {
+    return <RepairRedesign service={service} />;
   }
   const IconComponent = iconMap[service.iconName];
   const headerRef = useRef<HTMLElement>(null);

@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, ChevronRight, ChevronLeft } from "lucide-react";
+import { Check, ChevronRight, ChevronLeft, CheckCircle2, Phone, MessageCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const categories = [
@@ -21,15 +21,48 @@ const subServices: Record<string, string[]> = {
   repair: ["Refrigerator Servicing", "Air Conditioner Servicing", "Television Repair", "Home & Office Electronics Maintenance"],
 };
 
-export default function BookingForm() {
-  const [step, setStep] = useState(1);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+interface BookingFormProps {
+  initialCategory?: string | null;
+}
+
+export default function BookingForm({ initialCategory = null }: BookingFormProps) {
+  const [step, setStep] = useState(initialCategory ? 2 : 1);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(initialCategory);
   const [selectedSubServices, setSelectedSubServices] = useState<string[]>([]);
   
   // Step 3 state
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [notes, setNotes] = useState("");
+
+  useEffect(() => {
+    if (initialCategory) {
+      setSelectedCategory(initialCategory);
+      setSelectedSubServices([]); // Reset sub-services
+      setStep(2);
+    }
+  }, [initialCategory]);
+
+  useEffect(() => {
+    const handleSelectCategory = (e: Event) => {
+      const customEvent = e as CustomEvent<{ categoryId: string }>;
+      if (customEvent.detail && customEvent.detail.categoryId) {
+        setSelectedCategory(customEvent.detail.categoryId);
+        setSelectedSubServices([]); // Reset sub-services on category change
+        setStep(2); // Advance directly to selection
+        
+        const element = document.getElementById("booking");
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      }
+    };
+
+    window.addEventListener("select-booking-category", handleSelectCategory);
+    return () => {
+      window.removeEventListener("select-booking-category", handleSelectCategory);
+    };
+  }, []);
 
   const toggleSubService = (service: string) => {
     setSelectedSubServices((prev) =>
@@ -40,9 +73,15 @@ export default function BookingForm() {
   const nextStep = () => setStep((s) => Math.min(s + 1, 3));
   const prevStep = () => setStep((s) => Math.max(s - 1, 1));
 
+  const [submitted, setSubmitted] = useState(false);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    alert("Booking request submitted! (This is a prototype)");
+    setSubmitted(true);
+  };
+
+  const handleReset = () => {
+    setSubmitted(false);
     setStep(1);
     setSelectedCategory(null);
     setSelectedSubServices([]);
@@ -68,6 +107,33 @@ export default function BookingForm() {
         </div>
 
         <div className="relative overflow-hidden rounded-3xl bg-slate-800 p-6 shadow-2xl sm:p-12 border border-slate-700">
+          {/* Inline Success State */}
+          <AnimatePresence>
+            {submitted && (
+              <motion.div
+                key="success"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.5, type: "spring" }}
+                className="absolute inset-0 flex flex-col items-center justify-center bg-slate-800 z-10 text-center p-8"
+              >
+                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-teal-500/15 border border-teal-500/40 mb-6 shadow-[0_0_40px_rgba(20,184,166,0.2)]">
+                  <CheckCircle2 className="h-10 w-10 text-teal-400" />
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-3">Request Sent!</h3>
+                <p className="text-slate-400 text-base max-w-xs leading-relaxed mb-8">
+                  Thank you! Our team will contact you within 24 hours to confirm your booking.
+                </p>
+                <button
+                  onClick={handleReset}
+                  className="rounded-xl border border-slate-600 hover:border-teal-500 text-slate-300 hover:text-teal-400 text-sm font-semibold px-6 py-3 transition-all duration-300"
+                >
+                  Make Another Request
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
           {/* Progress Indicator */}
           <div className="mb-8 flex items-center justify-between">
             {[1, 2, 3].map((i) => (
@@ -247,7 +313,26 @@ export default function BookingForm() {
                       placeholder="Tell us more about what you need..."
                     />
                   </div>
-                  <div className="mt-8 flex justify-between pt-4 border-t border-slate-700">
+                  {/* Inline support CTA */}
+                  <div className="mt-6 flex flex-wrap items-center justify-center gap-3 rounded-2xl bg-slate-900/50 border border-slate-700 p-4">
+                    <p className="text-xs text-slate-500 mr-1">Prefer to talk directly?</p>
+                    <a
+                      href="https://wa.me/8801700000000"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 rounded-lg bg-green-700/80 hover:bg-green-600 text-white text-xs font-semibold px-4 py-2 transition-all duration-200"
+                    >
+                      <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
+                    </a>
+                    <a
+                      href="tel:+8801700000000"
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-slate-600 hover:border-slate-400 text-slate-400 hover:text-slate-200 text-xs font-semibold px-4 py-2 transition-all duration-200"
+                    >
+                      <Phone className="h-3.5 w-3.5" /> Call Us
+                    </a>
+                  </div>
+
+                  <div className="mt-6 flex justify-between pt-4 border-t border-slate-700">
                     <button
                       type="button"
                       onClick={prevStep}

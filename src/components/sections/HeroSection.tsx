@@ -6,18 +6,18 @@ import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion"
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 
-const words = ["Bashundhara", "Gulshan", "Banani", "Uttara", "Dhanmondi"];
+const places = ["Bashundhara", "Gulshan", "Banani", "Uttara", "Dhanmondi"];
 
 export default function HeroSection() {
-  const [wordIndex, setWordIndex] = useState(0);
+  const [placeIndex, setPlaceIndex] = useState(0);
   const { scrollY } = useScroll();
 
   useEffect(() => {
-    // Select a random starting word on client-side mount
-    setWordIndex(Math.floor(Math.random() * words.length));
+    // Select a random starting place on client-side mount
+    setPlaceIndex(Math.floor(Math.random() * places.length));
 
     const interval = setInterval(() => {
-      setWordIndex((prev) => (prev + 1) % words.length);
+      setPlaceIndex((prev) => (prev + 1) % places.length);
     }, 2000);
     return () => clearInterval(interval);
   }, []);
@@ -59,13 +59,13 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="flex flex-col gap-3 text-5xl font-extrabold tracking-tight sm:text-6xl md:text-7xl items-center text-white"
+          className="flex flex-col gap-3 text-4xl font-extrabold tracking-tight sm:text-6xl md:text-7xl items-center text-white"
         >
           <span>Everything You Need in</span>
-          <span className="relative inline-flex px-1 min-w-[160px] sm:min-w-[210px] md:min-w-[260px] justify-center overflow-hidden text-6xl sm:text-7xl md:text-8xl">
+          <span className="relative inline-flex px-1 min-w-[160px] sm:min-w-[210px] md:min-w-[260px] justify-center overflow-hidden text-5xl sm:text-7xl md:text-8xl">
             <AnimatePresence mode="wait">
               <motion.span 
-                key={words[wordIndex]}
+                key={places[placeIndex]}
                 className="inline-block text-teal-400 font-extrabold"
                 initial={{ y: 25, opacity: 0 }}
                 animate={{ 
@@ -80,7 +80,7 @@ export default function HeroSection() {
                   textShadow: { duration: 2, repeat: Infinity, ease: "easeInOut" }
                 }}
               >
-                {words[wordIndex]}
+                {places[placeIndex]}
               </motion.span>
             </AnimatePresence>
             {/* Animated Underline */}

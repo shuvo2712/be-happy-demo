@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import FloatingActionButton from "@/components/ui/FloatingActionButton";
 import Navbar from "@/components/ui/Navbar";
+import MobileTabBar from "@/components/ui/MobileTabBar";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -24,10 +25,17 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} h-full antialiased`}
     >
-      <body className={`${inter.className} min-h-full flex flex-col bg-slate-50 text-slate-900`} suppressHydrationWarning>
+      <body
+        className={`${inter.className} min-h-full flex flex-col bg-slate-50 text-slate-900`}
+        suppressHydrationWarning
+      >
         <Navbar />
-        {children}
+        {/* Add bottom padding on mobile so content is not hidden behind the tab bar */}
+        <div className="flex-1 pb-[72px] md:pb-0">
+          {children}
+        </div>
         <FloatingActionButton />
+        <MobileTabBar />
       </body>
     </html>
   );

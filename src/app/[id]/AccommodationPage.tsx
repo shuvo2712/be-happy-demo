@@ -237,7 +237,7 @@ export default function AccommodationPage({ service }: AccommodationPageProps) {
 
 
             {/* Main Booking Card */}
-            <div className="relative overflow-hidden rounded-3xl bg-slate-900 text-white border border-slate-800 shadow-2xl pt-12 pb-6 px-6 sm:pt-14 sm:pb-8 sm:px-8">
+            <div id="booking-form" className="scroll-mt-44 sm:scroll-mt-48 relative overflow-hidden rounded-3xl bg-slate-900 text-white border border-slate-800 shadow-2xl pt-12 pb-6 px-6 sm:pt-14 sm:pb-8 sm:px-8">
 
               {/* Orphan Donation Trust Badge */}
               <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-teal-600/90 to-teal-500/90 py-1.5 px-4 text-center text-[11px] font-bold text-white tracking-wide flex items-center justify-center gap-1">

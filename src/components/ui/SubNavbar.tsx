@@ -39,10 +39,26 @@ export default function SubNavbar<T extends string = string>({
             return (
               <button
                 key={id}
-                onClick={() => !disabled && onTabChange(id)}
+                onClick={() => {
+                  if (!disabled) {
+                    onTabChange(id);
+                    setTimeout(() => {
+                      const formElement = document.getElementById("booking-form");
+                      if (formElement) {
+                        const header = document.querySelector("section.sticky");
+                        const headerHeight = header ? header.getBoundingClientRect().height : 0;
+                        const targetY = window.scrollY + formElement.getBoundingClientRect().top;
+                        window.scrollTo({
+                          top: targetY - headerHeight - 16,
+                          behavior: "smooth",
+                        });
+                      }
+                    }, 50);
+                  }
+                }}
                 className={cn(
-                  "relative flex flex-1 items-center justify-center gap-1.5 py-2 sm:py-2.5 px-2 sm:px-5 rounded-lg sm:rounded-xl",
-                  "text-[10px] sm:text-sm font-bold tracking-wide transition-colors z-10 overflow-hidden",
+                  "relative flex flex-col flex-1 items-center justify-center gap-1 py-2 sm:py-2.5 px-2 sm:px-5 rounded-lg sm:rounded-xl",
+                  "text-[10px] sm:text-xs font-bold tracking-wide transition-colors z-10 overflow-hidden",
                   isActive ? "text-white" : "text-white/70 hover:text-white"
                 )}
               >

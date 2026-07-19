@@ -31,7 +31,7 @@ import GallerySection from "@/components/sections/GallerySection";
 import FeaturesSection from "@/components/sections/FeaturesSection";
 import { cn } from "@/lib/utils";
 
-interface RepairRedesignProps {
+interface RepairPageProps {
   service: ServiceType;
 }
 
@@ -50,7 +50,7 @@ interface UploadedFile {
   previewUrl?: string;
 }
 
-export default function RepairRedesign({ service }: RepairRedesignProps) {
+export default function RepairPage({ service }: RepairPageProps) {
   const [activeTab, setActiveTab] = useState<TabType>("fridge");
   const [step, setStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);

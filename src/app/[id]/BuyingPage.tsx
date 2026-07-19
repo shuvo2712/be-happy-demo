@@ -29,7 +29,7 @@ import GallerySection from "@/components/sections/GallerySection";
 import FeaturesSection from "@/components/sections/FeaturesSection";
 import { cn } from "@/lib/utils";
 
-interface BuyingRedesignProps {
+interface BuyingPageProps {
   service: ServiceType;
 }
 
@@ -47,7 +47,7 @@ interface UploadedFile {
   previewUrl?: string;
 }
 
-export default function BuyingRedesign({ service }: BuyingRedesignProps) {
+export default function BuyingPage({ service }: BuyingPageProps) {
   const [activeTab, setActiveTab] = useState<TabType>("furniture");
   const [step, setStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);

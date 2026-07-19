@@ -29,7 +29,7 @@ import GallerySection from "@/components/sections/GallerySection";
 import FeaturesSection from "@/components/sections/FeaturesSection";
 import { cn } from "@/lib/utils";
 
-interface ConciergeRedesignProps {
+interface ConciergePageProps {
   service: ServiceType;
 }
 
@@ -45,7 +45,7 @@ const tabs: { id: TabType; label: string; shortLabel: string; icon: React.Elemen
   { id: "housemate", label: "Housemate Finding", shortLabel: "Housemate", icon: Users },
 ];
 
-export default function ConciergeRedesign({ service }: ConciergeRedesignProps) {
+export default function ConciergePage({ service }: ConciergePageProps) {
   const [activeTab, setActiveTab] = useState<TabType>("hotel");
   const [step, setStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);

@@ -28,7 +28,7 @@ import GallerySection from "@/components/sections/GallerySection";
 import FeaturesSection from "@/components/sections/FeaturesSection";
 import { cn } from "@/lib/utils";
 
-interface TourRedesignProps {
+interface TourPageProps {
   service: ServiceType;
 }
 
@@ -53,7 +53,7 @@ const tabs: { id: TabType; label: string; shortLabel: string; icon: React.Elemen
   { id: "city", label: "City Tour & Experience", shortLabel: "City Tour", icon: Camera },
 ];
 
-export default function TourRedesign({ service }: TourRedesignProps) {
+export default function TourPage({ service }: TourPageProps) {
   const [activeTab, setActiveTab] = useState<TabType>("hourly");
   const [step, setStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);

@@ -2,7 +2,11 @@ import React from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { servicesData } from "@/lib/servicesData";
-import ServiceDetailClient from "./ServiceDetailClient";
+import AccommodationPage from "./AccommodationPage";
+import ConciergePage from "./ConciergePage";
+import TourPage from "./TourPage";
+import BuyingPage from "./BuyingPage";
+import RepairPage from "./RepairPage";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -36,5 +40,21 @@ export default async function ServiceDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  return <ServiceDetailClient service={service} />;
+  if (service.id === "accommodation") {
+    return <AccommodationPage service={service} />;
+  }
+  if (service.id === "concierge") {
+    return <ConciergePage service={service} />;
+  }
+  if (service.id === "tour") {
+    return <TourPage service={service} />;
+  }
+  if (service.id === "buying") {
+    return <BuyingPage service={service} />;
+  }
+  if (service.id === "repair") {
+    return <RepairPage service={service} />;
+  }
+
+  notFound();
 }

@@ -28,13 +28,13 @@ import GallerySection from "@/components/sections/GallerySection";
 import FeaturesSection from "@/components/sections/FeaturesSection";
 import { cn } from "@/lib/utils";
 
-interface AccommodationRedesignProps {
+interface AccommodationPageProps {
   service: ServiceType;
 }
 
 const areas = ["Gulshan", "Banani", "Baridhara", "Dhanmondi", "Uttara", "Bashundhara R/A"];
 
-export default function AccommodationRedesign({ service }: AccommodationRedesignProps) {
+export default function AccommodationPage({ service }: AccommodationPageProps) {
   const [activeTab, setActiveTab] = useState<"apartment" | "office" | "relocation">("apartment");
   const [step, setStep] = useState(1); // 1: search details, 2: contact info
   const [submitted, setSubmitted] = useState(false);

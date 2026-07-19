@@ -65,3 +65,8 @@ This section chronicles the step-by-step decisions and features we built during 
 4. **Deployment Configuration**:
    - Configured `next.config.ts` for static export (`output: 'export'`) and disabled image optimization.
    - Verified the static build output (`out/` folder) for manual drag-and-drop deployment via Netlify Drop.
+5. **Service Pages Refactoring & Architecture (Current Conversation)**:
+   - **UI Auditing & Button Styling**: Audited the 5 core service pages and updated the Quick Contact buttons to be more intuitive (WhatsApp changed to recognizable Green, Call Support to Slate) with proper hover states and shadows for a premium feel.
+   - **DRY Refactoring & Component Extraction**: Identified that several main sections (FAQ, Gallery, Testimonials, and "How it Works" processes) were duplicated across the 5 pages. To enforce exact UI parity and prevent future divergence, we extracted these into highly reusable shared components (`FAQSection.tsx`, `GallerySection.tsx`, `TestimonialsSection.tsx`, and `FeaturesSection.tsx`).
+   - **Flexible Layouts**: Enhanced `FeaturesSection` to support a `layout="grid"` (2x2) prop, allowing it to adapt to different page requirements while still sharing the exact same underlying component code.
+   - **Next.js Colocation & Routing Cleanup**: Renamed transitional `*Redesign.tsx` files to standard `*Page.tsx` conventions. We deleted the legacy 675-line `ServiceDetailClient.tsx` dispatcher entirely, moving the 5 custom page views directly into `src/app/[id]/` (the Vercel-recommended Colocation pattern). The main server component `src/app/[id]/page.tsx` now directly evaluates the URL `id` and returns the specific component, resulting in an exceptionally clean, optimized, and professional Next.js architecture.

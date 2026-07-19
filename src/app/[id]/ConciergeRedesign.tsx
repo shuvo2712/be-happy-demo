@@ -20,7 +20,8 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { type ServiceType } from "@/lib/servicesData";
+import { iconMap, type ServiceType } from "@/lib/servicesData";
+import FadeInSection from "@/components/ui/FadeInSection";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/sections/Footer";
 import { cn } from "@/lib/utils";
@@ -147,6 +148,7 @@ export default function ConciergeRedesign({ service }: ConciergeRedesignProps) {
   const inputCls = "w-full rounded-xl border border-slate-700 bg-slate-800/50 px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 transition-colors";
   const labelCls = "block text-xs font-semibold text-slate-300 mb-1.5";
   const gridHalf = "grid grid-cols-2 gap-3";
+  const IconComponent = iconMap[service.iconName as keyof typeof iconMap];
 
   return (
     <div className="flex flex-col min-h-screen bg-slate-50">
@@ -159,24 +161,30 @@ export default function ConciergeRedesign({ service }: ConciergeRedesignProps) {
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-slate-950" />
         </div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(20,184,166,0.1),transparent_60%)]" />
-        <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="max-w-2xl">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-teal-500/10 px-3 py-1 text-xs font-semibold text-teal-400 ring-1 ring-inset ring-teal-500/20">
-              <ShieldCheck className="h-3.5 w-3.5" /> White-Glove Concierge — Dhaka
-            </span>
-            <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-white sm:text-5xl">
-              One Message. Everything Arranged.
-            </h1>
-            <p className="mt-4 text-base sm:text-lg text-slate-400 leading-relaxed">
-              Hotels, flights, professional drivers, rental vehicles, or a trusted housemate — our dedicated concierge team in Dhaka handles every detail so you can focus on what matters.
-            </p>
+        <FadeInSection className="relative mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="flex flex-row items-start gap-4 sm:gap-6 md:gap-8">
+            <div className="hidden md:flex h-14 w-14 sm:h-20 sm:w-20 md:h-24 md:w-24 shrink-0 items-center justify-center rounded-2xl sm:rounded-3xl bg-teal-500/10 text-teal-400 border border-teal-500/30 shadow-[0_0_40px_rgba(20,184,166,0.2)]">
+              <IconComponent className="h-7 w-7 sm:h-10 sm:w-10 md:h-12 md:w-12" />
+            </div>
+            <div className="max-w-2xl">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-teal-500/10 px-3 py-1 text-xs font-semibold text-teal-400 ring-1 ring-inset ring-teal-500/20">
+                <ShieldCheck className="h-3.5 w-3.5" /> White-Glove Concierge — Dhaka
+              </span>
+              <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-white sm:text-5xl">
+                One Message. Everything Arranged.
+              </h1>
+              <p className="mt-4 text-base sm:text-lg text-slate-400 leading-relaxed">
+                Hotels, flights, professional drivers, rental vehicles, or a trusted housemate — our dedicated concierge team in Dhaka handles every detail so you can focus on what matters.
+              </p>
+            </div>
           </div>
-        </div>
+        </FadeInSection>
       </section>
 
       {/* Main Body */}
       <main className="mx-auto max-w-7xl w-full px-6 lg:px-8 py-10 sm:py-14">
-        <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12">
+        <FadeInSection delay={100}>
+          <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12">
 
           {/* RIGHT COLUMN — Wizard (Top on mobile, Right on desktop) */}
           <div className="w-full lg:w-[500px] shrink-0 order-1 lg:order-2 lg:sticky lg:top-24">
@@ -656,6 +664,7 @@ export default function ConciergeRedesign({ service }: ConciergeRedesignProps) {
             </div>
           </div>
         </div>
+        </FadeInSection>
       </main>
 
       <Footer />

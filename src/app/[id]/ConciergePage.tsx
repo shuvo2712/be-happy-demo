@@ -28,6 +28,7 @@ import FAQSection from "@/components/sections/FAQSection";
 import GallerySection from "@/components/sections/GallerySection";
 import FeaturesSection from "@/components/sections/FeaturesSection";
 import { cn } from "@/lib/utils";
+import SubNavbar from "@/components/ui/SubNavbar";
 
 interface ConciergePageProps {
   service: ServiceType;
@@ -151,8 +152,8 @@ export default function ConciergePage({ service }: ConciergePageProps) {
     <div className="flex flex-col min-h-screen bg-slate-50">
       <Navbar />
 
-      {/* Hero */}
-      <section className="relative bg-slate-950 pt-28 pb-8 overflow-hidden">
+      {/* Hero and SubNavbar Unified Sticky Header */}
+      <section className="sticky top-0 z-40 relative bg-slate-950 pt-28 pb-4 overflow-hidden shadow-2xl">
         <div className="absolute inset-0 opacity-20">
           <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${service.heroImage})` }} />
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-slate-950" />
@@ -196,6 +197,15 @@ export default function ConciergePage({ service }: ConciergePageProps) {
             </div>
           </div>
         </motion.div>
+
+        {/* Sub-Navbar — perfectly shares hero background and sticky behavior */}
+        <SubNavbar
+          tabs={tabs}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          layoutKey={service.id}
+          disabled={step !== 1 || submitted}
+        />
       </section>
 
       {/* Main Body */}
@@ -248,25 +258,6 @@ export default function ConciergePage({ service }: ConciergePageProps) {
                 </div>
               ) : (
                 <div className="pb-6">
-                  {/* Tabs — scrollable row */}
-                  {step === 1 && (
-                    <div className="flex gap-1 bg-slate-800/60 p-1 rounded-xl mb-6 overflow-x-auto scrollbar-hide">
-                      {tabs.map(({ id, shortLabel, icon: Icon }) => (
-                        <button
-                          key={id}
-                          onClick={() => setActiveTab(id)}
-                          className={cn(
-                            "flex flex-col items-center gap-1.5 py-2.5 px-3 rounded-lg text-[10px] font-bold transition-all whitespace-nowrap shrink-0",
-                            activeTab === id ? "bg-teal-600 text-white shadow-md" : "text-slate-400 hover:text-white"
-                          )}
-                        >
-                          <Icon className="h-4 w-4" />
-                          {shortLabel}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-
                   {/* Step Header */}
                   <div className="mb-5 flex items-center justify-between">
                     <h3 className="text-lg font-bold text-white">
@@ -555,7 +546,7 @@ export default function ConciergePage({ service }: ConciergePageProps) {
           <div className="w-full order-2 space-y-12">
 
             {/* How Concierge Works */}
-            <FeaturesSection 
+            <FeaturesSection
               title="How Concierge Works"
               subtitle="Simple Process"
               description=""
@@ -569,7 +560,7 @@ export default function ConciergePage({ service }: ConciergePageProps) {
             />
 
             {/* Service Showcase Gallery */}
-            <GallerySection 
+            <GallerySection
               title="Our Concierge Services"
               subtitle="What We Arrange"
               description="From a last-minute airport transfer to a week-long hotel stay — we handle it all."
@@ -582,14 +573,14 @@ export default function ConciergePage({ service }: ConciergePageProps) {
             />
 
             {/* Testimonials */}
-            <TestimonialsSection 
+            <TestimonialsSection
               testimonials={service.testimonials}
               subtitle="Business Travelers & Expats"
               title="What Clients Say"
             />
 
             {/* FAQ */}
-            <FAQSection 
+            <FAQSection
               faqs={service.faqs}
               subtitle="Knowledge Base"
               title="Concierge FAQ"

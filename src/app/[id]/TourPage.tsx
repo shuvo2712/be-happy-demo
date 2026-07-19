@@ -27,6 +27,7 @@ import FAQSection from "@/components/sections/FAQSection";
 import GallerySection from "@/components/sections/GallerySection";
 import FeaturesSection from "@/components/sections/FeaturesSection";
 import { cn } from "@/lib/utils";
+import SubNavbar from "@/components/ui/SubNavbar";
 
 interface TourPageProps {
   service: ServiceType;
@@ -139,8 +140,8 @@ export default function TourPage({ service }: TourPageProps) {
     <div className="flex flex-col min-h-screen bg-slate-50">
       <Navbar />
 
-      {/* Hero */}
-      <section className="relative bg-slate-950 pt-28 pb-8 overflow-hidden">
+      {/* Hero and SubNavbar Unified Sticky Header */}
+      <section className="sticky top-0 z-40 relative bg-slate-950 pt-28 pb-4 overflow-hidden shadow-2xl">
         <div className="absolute inset-0 opacity-20">
           <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${service.heroImage})` }} />
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-slate-950" />
@@ -184,9 +185,17 @@ export default function TourPage({ service }: TourPageProps) {
             </div>
           </div>
         </motion.div>
+
+        {/* Sub-Navbar — perfectly shares hero background and sticky behavior */}
+        <SubNavbar
+          tabs={tabs}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          layoutKey={service.id}
+          disabled={step !== 1 || submitted}
+        />
       </section>
 
-      {/* Main body */}
       <main className="mx-auto max-w-7xl w-full px-6 lg:px-8 py-6 sm:py-8">
         <motion.div
           initial={{ opacity: 0, y: 15 }}
@@ -195,12 +204,12 @@ export default function TourPage({ service }: TourPageProps) {
           className="flex flex-col gap-8 lg:gap-12 max-w-4xl mx-auto"
         >
 
-            {/* RIGHT — Wizard (top on mobile, right on desktop) */}
-            <div className="w-full order-1">
+          {/* RIGHT — Wizard (top on mobile, right on desktop) */}
+          <div className="w-full order-1">
 
 
 
-              {/* Booking Card */}
+            {/* Booking Card */}
             <div className="relative overflow-hidden rounded-3xl bg-slate-900 text-white border border-slate-800 shadow-2xl p-6 sm:p-8">
               {/* Donation badge */}
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-r from-teal-600/90 to-teal-500/90 py-1.5 px-4 text-center text-[11px] font-bold text-white tracking-wide flex items-center justify-center gap-1">
@@ -235,25 +244,6 @@ export default function TourPage({ service }: TourPageProps) {
                 </div>
               ) : (
                 <div className="pb-6">
-                  {/* Tabs */}
-                  {step === 1 && (
-                    <div className="flex gap-1 bg-slate-800/60 p-1 rounded-xl mb-6 overflow-x-auto">
-                      {tabs.map(({ id, shortLabel, icon: Icon }) => (
-                        <button
-                          key={id}
-                          onClick={() => setActiveTab(id)}
-                          className={cn(
-                            "flex flex-col items-center gap-1.5 py-2.5 px-4 rounded-lg text-[10px] font-bold transition-all whitespace-nowrap flex-1",
-                            activeTab === id ? "bg-teal-600 text-white shadow-md" : "text-slate-400 hover:text-white"
-                          )}
-                        >
-                          <Icon className="h-4 w-4" />
-                          {shortLabel}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-
                   {/* Step Header */}
                   <div className="mb-5 flex items-center justify-between">
                     <h3 className="text-lg font-bold">
@@ -484,7 +474,7 @@ export default function TourPage({ service }: TourPageProps) {
           <div className="w-full order-2 space-y-12">
 
             {/* How Tour Booking Works */}
-            <FeaturesSection 
+            <FeaturesSection
               title="How Tour Booking Works"
               subtitle="Simple Process"
               description=""
@@ -498,7 +488,7 @@ export default function TourPage({ service }: TourPageProps) {
             />
 
             {/* Tour Gallery */}
-            <GallerySection 
+            <GallerySection
               title="What You Will Experience"
               subtitle="Real Dhaka"
               description="Iconic landmarks, hidden markets, and authentic local culture — all with an expert guide by your side."
@@ -511,14 +501,14 @@ export default function TourPage({ service }: TourPageProps) {
             />
 
             {/* Testimonials */}
-            <TestimonialsSection 
+            <TestimonialsSection
               testimonials={service.testimonials}
               subtitle="Tourists & Delegations"
               title="What Visitors Say"
             />
 
             {/* FAQ */}
-            <FAQSection 
+            <FAQSection
               faqs={service.faqs}
               subtitle="Knowledge Base"
               title="Tour Guide FAQ"

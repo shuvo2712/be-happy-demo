@@ -30,6 +30,7 @@ import FAQSection from "@/components/sections/FAQSection";
 import GallerySection from "@/components/sections/GallerySection";
 import FeaturesSection from "@/components/sections/FeaturesSection";
 import { cn } from "@/lib/utils";
+import SubNavbar from "@/components/ui/SubNavbar";
 
 interface RepairPageProps {
   service: ServiceType;
@@ -155,8 +156,8 @@ export default function RepairPage({ service }: RepairPageProps) {
     <div className="flex flex-col min-h-screen bg-slate-50">
       <Navbar />
 
-      {/* Hero */}
-      <section className="relative bg-slate-950 pt-28 pb-8 overflow-hidden">
+      {/* Hero and SubNavbar Unified Sticky Header */}
+      <section className="sticky top-0 z-40 relative bg-slate-950 pt-28 pb-4 overflow-hidden shadow-2xl">
         <div className="absolute inset-0 opacity-20">
           <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${service.heroImage})` }} />
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-slate-950" />
@@ -200,6 +201,15 @@ export default function RepairPage({ service }: RepairPageProps) {
             </div>
           </div>
         </motion.div>
+
+        {/* Sub-Navbar — perfectly shares hero background and sticky behavior */}
+        <SubNavbar
+          tabs={tabs}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          layoutKey={service.id}
+          disabled={step !== 1 || submitted}
+        />
       </section>
 
       {/* Main Body */}
@@ -250,25 +260,6 @@ export default function RepairPage({ service }: RepairPageProps) {
                 </div>
               ) : (
                 <div className="pb-6">
-                  {/* Tabs */}
-                  {step === 1 && (
-                    <div className="grid grid-cols-4 gap-1 bg-slate-800/60 p-1 rounded-xl mb-6">
-                      {tabs.map(({ id, shortLabel, icon: Icon }) => (
-                        <button
-                          key={id}
-                          onClick={() => setActiveTab(id)}
-                          className={cn(
-                            "flex flex-col items-center gap-1.5 py-2.5 rounded-lg text-[9px] sm:text-[10px] font-bold transition-all",
-                            activeTab === id ? "bg-teal-600 text-white shadow-md" : "text-slate-400 hover:text-white"
-                          )}
-                        >
-                          <Icon className="h-4 w-4" />
-                          {shortLabel}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-
                   {/* Step Header */}
                   <div className="mb-5 flex items-center justify-between">
                     <h3 className="text-lg font-bold">
@@ -569,7 +560,7 @@ export default function RepairPage({ service }: RepairPageProps) {
 
 
             {/* How It Works */}
-            <FeaturesSection 
+            <FeaturesSection
               title="How Repair Booking Works"
               subtitle="Simple Process"
               description=""
@@ -583,7 +574,7 @@ export default function RepairPage({ service }: RepairPageProps) {
             />
 
             {/* Service Gallery */}
-            <GallerySection 
+            <GallerySection
               title="What We Repair"
               subtitle="Appliance Services"
               description="Certified technicians covering all major home and office appliances."
@@ -596,13 +587,13 @@ export default function RepairPage({ service }: RepairPageProps) {
             />
 
             {/* Testimonials */}
-            <TestimonialsSection 
+            <TestimonialsSection
               testimonials={service.testimonials}
               subtitle="Homeowners & Offices"
               title="What Clients Say"
             />
             {/* FAQ */}
-            <FAQSection 
+            <FAQSection
               faqs={service.faqs}
               subtitle="Common Questions"
               title="Repair & Maintenance FAQ"

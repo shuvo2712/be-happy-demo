@@ -27,6 +27,7 @@ import FAQSection from "@/components/sections/FAQSection";
 import GallerySection from "@/components/sections/GallerySection";
 import FeaturesSection from "@/components/sections/FeaturesSection";
 import { cn } from "@/lib/utils";
+import SubNavbar from "@/components/ui/SubNavbar";
 
 interface AccommodationPageProps {
   service: ServiceType;
@@ -34,8 +35,16 @@ interface AccommodationPageProps {
 
 const areas = ["Gulshan", "Banani", "Baridhara", "Dhanmondi", "Uttara", "Bashundhara R/A"];
 
+type TabType = "apartment" | "office" | "relocation";
+
+const tabs: { id: TabType; label: string; shortLabel: string; icon: React.ElementType }[] = [
+  { id: "apartment", label: "Apartment Search", shortLabel: "Apts", icon: Home },
+  { id: "office", label: "Office Search", shortLabel: "Offices", icon: Briefcase },
+  { id: "relocation", label: "Relocation Details", shortLabel: "Relocate", icon: Truck },
+];
+
 export default function AccommodationPage({ service }: AccommodationPageProps) {
-  const [activeTab, setActiveTab] = useState<"apartment" | "office" | "relocation">("apartment");
+  const [activeTab, setActiveTab] = useState<TabType>("apartment");
   const [step, setStep] = useState(1); // 1: search details, 2: contact info
   const [submitted, setSubmitted] = useState(false);
   const [bookingRef, setBookingRef] = useState("");
@@ -95,8 +104,8 @@ export default function AccommodationPage({ service }: AccommodationPageProps) {
     activeTab === "apartment"
       ? isAptStep1Valid
       : activeTab === "office"
-      ? isOffStep1Valid
-      : isRelStep1Valid;
+        ? isOffStep1Valid
+        : isRelStep1Valid;
 
   const isStep2Valid = name.trim() !== "" && phone.trim() !== "";
 
@@ -143,7 +152,7 @@ export default function AccommodationPage({ service }: AccommodationPageProps) {
       <Navbar />
 
       {/* ── Header / Parallax Hero ── */}
-      <section className="relative bg-slate-950 pt-28 pb-8 overflow-hidden">
+      <section className="sticky top-0 z-40 relative bg-slate-950 pt-28 pb-4 overflow-hidden shadow-2xl">
         <div className="absolute inset-0 opacity-20">
           <div
             className="absolute inset-0 bg-cover bg-center"
@@ -191,6 +200,15 @@ export default function AccommodationPage({ service }: AccommodationPageProps) {
             </div>
           </div>
         </motion.div>
+
+        {/* Sub-Navbar — perfectly shares hero background and sticky behavior */}
+        <SubNavbar
+          tabs={tabs}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          layoutKey={service.id}
+          disabled={step !== 1 || submitted}
+        />
       </section>
 
       {/* ── Main Content Body: Split Screen ── */}
@@ -202,15 +220,15 @@ export default function AccommodationPage({ service }: AccommodationPageProps) {
           transition={{ duration: 0.5, delay: 0.15 }}
           className="flex flex-col gap-8 lg:gap-12 max-w-4xl mx-auto"
         >
-          
+
           {/* ── LEFT COLUMN: Interactive Search Wizard (Mobile Top, Desktop Left) ── */}
           <div className="w-full order-1">
-            
+
 
 
             {/* Main Booking Card */}
             <div className="relative overflow-hidden rounded-3xl bg-slate-900 text-white border border-slate-800 shadow-2xl p-6 sm:p-8">
-              
+
               {/* Orphan Donation Trust Badge */}
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-r from-teal-600/90 to-teal-500/90 py-1.5 px-4 text-center text-[11px] font-bold text-white tracking-wide flex items-center justify-center gap-1">
                 <Heart className="h-3 w-3 fill-white text-white animate-pulse" />
@@ -225,7 +243,7 @@ export default function AccommodationPage({ service }: AccommodationPageProps) {
                   </div>
                   <h3 className="text-2xl font-bold text-white mb-2">Request Submitted!</h3>
                   <p className="text-xs text-slate-400 mb-6">Our dedicated assistant is starting your search today.</p>
-                  
+
                   <div className="bg-slate-800/60 border border-slate-700 rounded-2xl p-4 mb-6">
                     <p className="text-[10px] uppercase tracking-wider text-slate-500">Booking Reference ID</p>
                     <p className="text-xl font-mono font-bold text-teal-400 mt-1">{bookingRef}</p>
@@ -254,56 +272,10 @@ export default function AccommodationPage({ service }: AccommodationPageProps) {
                 </div>
               ) : (
                 <div className="pb-6">
-                  {/* Tabs */}
-                  {step === 1 && (
-                    <div className="grid grid-cols-3 gap-1 bg-slate-800/60 p-1 rounded-xl mb-6">
-                      <button
-                        onClick={() => setActiveTab("apartment")}
-                        className={cn(
-                          "flex flex-col items-center gap-1.5 py-2.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all",
-                          activeTab === "apartment"
-                            ? "bg-teal-600 text-white shadow-md"
-                            : "text-slate-400 hover:text-white"
-                        )}
-                      >
-                        <Home className="h-4 w-4" />
-                        Apts
-                      </button>
-                      <button
-                        onClick={() => setActiveTab("office")}
-                        className={cn(
-                          "flex flex-col items-center gap-1.5 py-2.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all",
-                          activeTab === "office"
-                            ? "bg-teal-600 text-white shadow-md"
-                            : "text-slate-400 hover:text-white"
-                        )}
-                      >
-                        <Briefcase className="h-4 w-4" />
-                        Offices
-                      </button>
-                      <button
-                        onClick={() => setActiveTab("relocation")}
-                        className={cn(
-                          "flex flex-col items-center gap-1.5 py-2.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all",
-                          activeTab === "relocation"
-                            ? "bg-teal-600 text-white shadow-md"
-                            : "text-slate-400 hover:text-white"
-                        )}
-                      >
-                        <Truck className="h-4 w-4" />
-                        Relocate
-                      </button>
-                    </div>
-                  )}
-
                   {/* Wizard Header */}
                   <div className="mb-6 flex items-center justify-between">
                     <h3 className="text-lg font-bold text-white">
-                      {step === 1 ? (
-                        activeTab === "apartment" ? "Apartment Search" : activeTab === "office" ? "Office Search" : "Relocation Details"
-                      ) : (
-                        "Contact Details"
-                      )}
+                      {step === 1 ? tabs.find((t) => t.id === activeTab)?.label : "Contact Details"}
                     </h3>
                     <span className="text-xs text-teal-400 font-bold bg-teal-500/10 px-2 py-0.5 rounded-md">
                       Step {step} of 2
@@ -314,7 +286,7 @@ export default function AccommodationPage({ service }: AccommodationPageProps) {
                     {step === 1 ? (
                       /* ── STEP 1 FORMS ── */
                       <div className="space-y-4">
-                        
+
                         {/* ── APARTMENT FORM ── */}
                         {activeTab === "apartment" && (
                           <>
@@ -816,9 +788,9 @@ export default function AccommodationPage({ service }: AccommodationPageProps) {
 
           {/* ── RIGHT COLUMN: Detailed Content Sections ── */}
           <div className="w-full order-2 space-y-12">
-            
+
             {/* How Relocation Works */}
-            <FeaturesSection 
+            <FeaturesSection
               title="How Relocation Works"
               subtitle="Simple Process"
               description=""
@@ -869,7 +841,7 @@ export default function AccommodationPage({ service }: AccommodationPageProps) {
             />
 
             {/* Testimonials */}
-            <TestimonialsSection 
+            <TestimonialsSection
               testimonials={service.testimonials}
               subtitle="Expats & Corporations"
               title="What Relocated Clients Say"

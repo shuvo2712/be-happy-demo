@@ -28,6 +28,7 @@ import FAQSection from "@/components/sections/FAQSection";
 import GallerySection from "@/components/sections/GallerySection";
 import FeaturesSection from "@/components/sections/FeaturesSection";
 import { cn } from "@/lib/utils";
+import SubNavbar from "@/components/ui/SubNavbar";
 
 interface BuyingPageProps {
   service: ServiceType;
@@ -148,8 +149,8 @@ export default function BuyingPage({ service }: BuyingPageProps) {
     <div className="flex flex-col min-h-screen bg-slate-50">
       <Navbar />
 
-      {/* Hero */}
-      <section className="relative bg-slate-950 pt-28 pb-8 overflow-hidden">
+      {/* Hero and SubNavbar Unified Sticky Header */}
+      <section className="sticky top-0 z-40 relative bg-slate-950 pt-28 pb-4 overflow-hidden shadow-2xl">
         <div className="absolute inset-0 opacity-20">
           <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${service.heroImage})` }} />
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-slate-950" />
@@ -193,6 +194,15 @@ export default function BuyingPage({ service }: BuyingPageProps) {
             </div>
           </div>
         </motion.div>
+
+        {/* Sub-Navbar — perfectly shares hero background and sticky behavior */}
+        <SubNavbar
+          tabs={tabs}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          layoutKey={service.id}
+          disabled={step !== 1 || submitted}
+        />
       </section>
 
       {/* Main */}
@@ -243,25 +253,6 @@ export default function BuyingPage({ service }: BuyingPageProps) {
                 </div>
               ) : (
                 <div className="pb-6">
-                  {/* Tabs */}
-                  {step === 1 && (
-                    <div className="grid grid-cols-3 gap-1 bg-slate-800/60 p-1 rounded-xl mb-6">
-                      {tabs.map(({ id, shortLabel, icon: Icon }) => (
-                        <button
-                          key={id}
-                          onClick={() => setActiveTab(id)}
-                          className={cn(
-                            "flex flex-col items-center gap-1.5 py-2.5 rounded-lg text-[10px] font-bold transition-all",
-                            activeTab === id ? "bg-teal-600 text-white shadow-md" : "text-slate-400 hover:text-white"
-                          )}
-                        >
-                          <Icon className="h-4 w-4" />
-                          {shortLabel}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-
                   {/* Step Header */}
                   <div className="mb-5 flex items-center justify-between">
                     <h3 className="text-lg font-bold">
@@ -492,7 +483,7 @@ export default function BuyingPage({ service }: BuyingPageProps) {
           {/* LEFT — Trust, Gallery, Testimonials, FAQ */}
           <div className="w-full order-2 space-y-12">
             {/* How It Works */}
-            <FeaturesSection 
+            <FeaturesSection
               title="How Buying Works"
               subtitle="Simple Process"
               description=""
@@ -506,7 +497,7 @@ export default function BuyingPage({ service }: BuyingPageProps) {
             />
 
             {/* Gallery */}
-            <GallerySection 
+            <GallerySection
               title="Items We Accept"
               subtitle="What We Buy"
               description="We purchase a wide range of used items in good to fair condition."
@@ -519,13 +510,13 @@ export default function BuyingPage({ service }: BuyingPageProps) {
             />
 
             {/* Testimonials */}
-            <TestimonialsSection 
+            <TestimonialsSection
               testimonials={service.testimonials}
               subtitle="Expats & Departing Residents"
               title="What Sellers Say"
             />
 
-            <FAQSection 
+            <FAQSection
               faqs={service.faqs}
               subtitle="Common Questions"
               title="Buying Used Items FAQ"

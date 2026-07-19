@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Star,
   ChevronDown,
@@ -29,6 +29,8 @@ import GallerySection from "@/components/sections/GallerySection";
 import FeaturesSection from "@/components/sections/FeaturesSection";
 import { cn } from "@/lib/utils";
 import SubNavbar from "@/components/ui/SubNavbar";
+import { useScrolled } from "@/hooks/useScrolled";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 interface ConciergePageProps {
   service: ServiceType;
@@ -148,12 +150,15 @@ export default function ConciergePage({ service }: ConciergePageProps) {
   const gridHalf = "grid grid-cols-2 gap-3";
   const IconComponent = iconMap[service.iconName as keyof typeof iconMap];
 
+  const heroScrolled = useScrolled(50);
+  const isMobile = useIsMobile();
+
   return (
     <div className="flex flex-col min-h-screen bg-slate-50">
       <Navbar />
 
       {/* Hero and SubNavbar Unified Sticky Header */}
-      <section className="sticky top-0 z-40 relative bg-slate-950 pt-28 pb-4 overflow-hidden shadow-2xl">
+      <section className="sticky top-0 z-40 relative bg-slate-950 pt-28 pb-4 overflow-hidden shadow-[0_8px_30px_rgba(20,184,166,0.15)] border-b border-teal-500/50">
         <div className="absolute inset-0 opacity-20">
           <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${service.heroImage})` }} />
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-slate-950" />
@@ -166,34 +171,39 @@ export default function ConciergePage({ service }: ConciergePageProps) {
           className="relative mx-auto max-w-7xl px-6 lg:px-8"
         >
           <div className="flex flex-row items-center gap-4 sm:gap-6 md:gap-8">
-            <div className="hidden md:flex h-14 w-14 sm:h-20 sm:w-20 md:h-24 md:w-24 shrink-0 items-center justify-center rounded-2xl sm:rounded-3xl bg-teal-500/10 text-teal-400 border border-teal-500/30 shadow-[0_0_40px_rgba(20,184,166,0.2)]">
-              <IconComponent className="h-7 w-7 sm:h-10 sm:w-10 md:h-12 md:w-12" />
-            </div>
+            {/* Desktop service icon — shrinks when scrolled */}
+            <motion.div
+              initial={{ width: "6rem", height: "6rem" }}
+              animate={heroScrolled
+                ? { width: "3.5rem", height: "3.5rem" }
+                : { width: "6rem", height: "6rem" }
+              }
+              transition={{ duration: 0.35, ease: "easeInOut" }}
+              className="hidden md:flex shrink-0 items-center justify-center rounded-2xl bg-teal-500/10 text-teal-400 border border-teal-500/30 shadow-[0_0_40px_rgba(20,184,166,0.2)]"
+            >
+              <motion.div
+                initial={{ width: "3rem", height: "3rem" }}
+                animate={heroScrolled
+                  ? { width: "1.75rem", height: "1.75rem" }
+                  : { width: "3rem", height: "3rem" }
+                }
+                transition={{ duration: 0.35, ease: "easeInOut" }}
+              >
+                <IconComponent className="w-full h-full" />
+              </motion.div>
+            </motion.div>
             <div className="flex-1">
-              <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-5xl">
+              <motion.h1
+                initial={isMobile ? { fontSize: "1.875rem", lineHeight: "2.25rem" } : { fontSize: "3rem", lineHeight: "1" }}
+                animate={isMobile && heroScrolled
+                  ? { fontSize: "1.125rem", lineHeight: "1.75rem" }
+                  : (isMobile ? { fontSize: "1.875rem", lineHeight: "2.25rem" } : { fontSize: "3rem", lineHeight: "1" })
+                }
+                transition={{ duration: 0.35, ease: "easeInOut" }}
+                className="font-extrabold tracking-tight text-white sm:text-5xl"
+              >
                 One Message. Everything Arranged.
-              </h1>
-              {/* Value Props — glassmorphism cards */}
-              <div className="mt-6 grid grid-cols-2 gap-2.5 sm:gap-3">
-                <div className="flex items-start gap-2 sm:gap-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm px-3 py-2.5 sm:px-4 sm:py-3">
-                  <div className="h-7 w-7 sm:h-8 sm:w-8 shrink-0 rounded-xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400">
-                    <ShieldCheck className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                  </div>
-                  <div>
-                    <p className="text-xs sm:text-sm font-bold text-white">Fully Vetted Partners</p>
-                    <p className="text-[10px] sm:text-xs text-slate-400 leading-relaxed mt-0.5 hidden sm:block">Hotels, drivers &amp; vendors personally vetted for safety and fair pricing.</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-2 sm:gap-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm px-3 py-2.5 sm:px-4 sm:py-3">
-                  <div className="h-7 w-7 sm:h-8 sm:w-8 shrink-0 rounded-xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400">
-                    <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                  </div>
-                  <div>
-                    <p className="text-xs sm:text-sm font-bold text-white">Same-Day Confirmation</p>
-                    <p className="text-[10px] sm:text-xs text-slate-400 leading-relaxed mt-0.5 hidden sm:block">Submit before noon, confirmed by end of business day.</p>
-                  </div>
-                </div>
-              </div>
+              </motion.h1>
             </div>
           </div>
         </motion.div>
@@ -223,9 +233,9 @@ export default function ConciergePage({ service }: ConciergePageProps) {
 
 
             {/* Booking Card */}
-            <div className="relative overflow-hidden rounded-3xl bg-slate-900 text-white border border-slate-800 shadow-2xl p-6 sm:p-8">
+            <div className="relative overflow-hidden rounded-3xl bg-slate-900 text-white border border-slate-800 shadow-2xl pt-12 pb-6 px-6 sm:pt-14 sm:pb-8 sm:px-8">
               {/* Donation Badge */}
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-r from-teal-600/90 to-teal-500/90 py-1.5 px-4 text-center text-[11px] font-bold text-white tracking-wide flex items-center justify-center gap-1">
+              <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-teal-600/90 to-teal-500/90 py-1.5 px-4 text-center text-[11px] font-bold text-white tracking-wide flex items-center justify-center gap-1">
                 <Heart className="h-3 w-3 fill-white text-white animate-pulse" />
                 10% of every booking supports local orphans in Dhaka
               </div>
@@ -540,10 +550,55 @@ export default function ConciergePage({ service }: ConciergePageProps) {
                 <Phone className="h-4 w-4 text-white fill-white" /> Call Support
               </a>
             </div>
+
+            {/* Service Showcase Gallery */}
+            <div className="mt-8">
+              <GallerySection
+                title="Our Concierge Services"
+                subtitle="What We Arrange"
+                description="From a last-minute airport transfer to a week-long hotel stay — we handle it all."
+                items={[
+                  { title: "5-Star Hotel Reservations", area: "Gulshan & Baridhara", img: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500&q=80", subtitle: "Vetted Concierge Partner" },
+                  { title: "Professional Airport Drivers", area: "HSIA, Dhaka", img: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=500&q=80", subtitle: "Vetted Concierge Partner" },
+                  { title: "Luxury Car Rentals", area: "All Areas, Dhaka", img: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=500&q=80", subtitle: "Vetted Concierge Partner" },
+                  { title: "Flight & Travel Planning", area: "International Departures", img: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=500&q=80", subtitle: "Vetted Concierge Partner" },
+                ]}
+              />
+            </div>
           </div>
 
           {/* LEFT COLUMN — Trust, Gallery, Testimonials, FAQ */}
           <div className="w-full order-2 space-y-12">
+
+            {/* Value Propositions */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
+              <div className="flex items-start gap-2 sm:gap-3 rounded-2xl bg-slate-100 border border-slate-200 px-3 py-2.5 sm:px-4 sm:py-3">
+                <div className="h-7 w-7 sm:h-8 sm:w-8 shrink-0 rounded-xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-600">
+                  <ShieldCheck className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                </div>
+                <div>
+                  <p className="text-xs sm:text-sm font-bold text-slate-900">Fully Vetted Partners</p>
+                  <p className="text-[10px] sm:text-xs text-slate-500 leading-relaxed mt-0.5">Hotels, drivers &amp; vendors personally vetted for safety and fair pricing.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-2 sm:gap-3 rounded-2xl bg-slate-100 border border-slate-200 px-3 py-2.5 sm:px-4 sm:py-3">
+                <div className="h-7 w-7 sm:h-8 sm:w-8 shrink-0 rounded-xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-600">
+                  <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                </div>
+                <div>
+                  <p className="text-xs sm:text-sm font-bold text-slate-900">Same-Day Confirmation</p>
+                  <p className="text-[10px] sm:text-xs text-slate-500 leading-relaxed mt-0.5">Submit before noon, confirmed by end of business day.</p>
+                </div>
+              </div>
+            </div>
+
+
+            {/* Testimonials */}
+            <TestimonialsSection
+              testimonials={service.testimonials}
+              subtitle="Business Travelers & Expats"
+              title="What Clients Say"
+            />
 
             {/* How Concierge Works */}
             <FeaturesSection
@@ -557,26 +612,6 @@ export default function ConciergePage({ service }: ConciergePageProps) {
                 { step: 3, title: "Dedicated Support", desc: "24/7 on-call assistance for the duration of your service." },
                 { step: 4, title: "VIP Treatment", desc: "Enjoy priority access without the logistical stress." },
               ]}
-            />
-
-            {/* Service Showcase Gallery */}
-            <GallerySection
-              title="Our Concierge Services"
-              subtitle="What We Arrange"
-              description="From a last-minute airport transfer to a week-long hotel stay — we handle it all."
-              items={[
-                { title: "5-Star Hotel Reservations", area: "Gulshan & Baridhara", img: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500&q=80", subtitle: "Vetted Concierge Partner" },
-                { title: "Professional Airport Drivers", area: "HSIA, Dhaka", img: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=500&q=80", subtitle: "Vetted Concierge Partner" },
-                { title: "Luxury Car Rentals", area: "All Areas, Dhaka", img: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=500&q=80", subtitle: "Vetted Concierge Partner" },
-                { title: "Flight & Travel Planning", area: "International Departures", img: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=500&q=80", subtitle: "Vetted Concierge Partner" },
-              ]}
-            />
-
-            {/* Testimonials */}
-            <TestimonialsSection
-              testimonials={service.testimonials}
-              subtitle="Business Travelers & Expats"
-              title="What Clients Say"
             />
 
             {/* FAQ */}

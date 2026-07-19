@@ -35,12 +35,14 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const isServicePage = ["/accommodation", "/concierge", "/tour", "/buying", "/repair"].includes(pathname);
+
   return (
     <header
       className={cn(
         "fixed inset-x-0 top-0 z-50 flex items-center justify-between px-6 py-4 transition-all duration-300 md:px-12",
         isScrolled
-          ? "bg-slate-900/80 backdrop-blur-md shadow-md py-3"
+          ? (isServicePage ? "bg-transparent py-3" : "bg-slate-900/80 backdrop-blur-md shadow-md py-3")
           : "bg-transparent py-6"
       )}
     >

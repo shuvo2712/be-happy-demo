@@ -29,6 +29,8 @@ import GallerySection from "@/components/sections/GallerySection";
 import FeaturesSection from "@/components/sections/FeaturesSection";
 import { cn } from "@/lib/utils";
 import SubNavbar from "@/components/ui/SubNavbar";
+import { useScrolled } from "@/hooks/useScrolled";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 interface BuyingPageProps {
   service: ServiceType;
@@ -145,12 +147,15 @@ export default function BuyingPage({ service }: BuyingPageProps) {
   const labelCls = "block text-xs font-semibold text-slate-300 mb-1.5";
   const IconComponent = iconMap[service.iconName as keyof typeof iconMap];
 
+  const heroScrolled = useScrolled(50);
+  const isMobile = useIsMobile();
+
   return (
     <div className="flex flex-col min-h-screen bg-slate-50">
       <Navbar />
 
       {/* Hero and SubNavbar Unified Sticky Header */}
-      <section className="sticky top-0 z-40 relative bg-slate-950 pt-28 pb-4 overflow-hidden shadow-2xl">
+      <section className="sticky top-0 z-40 relative bg-slate-950 pt-28 pb-4 overflow-hidden shadow-[0_8px_30px_rgba(20,184,166,0.15)] border-b border-teal-500/50">
         <div className="absolute inset-0 opacity-20">
           <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${service.heroImage})` }} />
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-slate-950" />
@@ -163,34 +168,39 @@ export default function BuyingPage({ service }: BuyingPageProps) {
           className="relative mx-auto max-w-7xl px-6 lg:px-8"
         >
           <div className="flex flex-row items-center gap-4 sm:gap-6 md:gap-8">
-            <div className="hidden md:flex h-14 w-14 sm:h-20 sm:w-20 md:h-24 md:w-24 shrink-0 items-center justify-center rounded-2xl sm:rounded-3xl bg-teal-500/10 text-teal-400 border border-teal-500/30 shadow-[0_0_40px_rgba(20,184,166,0.2)]">
-              <IconComponent className="h-7 w-7 sm:h-10 sm:w-10 md:h-12 md:w-12" />
-            </div>
+            {/* Desktop service icon — shrinks when scrolled */}
+            <motion.div
+              initial={{ width: "6rem", height: "6rem" }}
+              animate={heroScrolled
+                ? { width: "3.5rem", height: "3.5rem" }
+                : { width: "6rem", height: "6rem" }
+              }
+              transition={{ duration: 0.35, ease: "easeInOut" }}
+              className="hidden md:flex shrink-0 items-center justify-center rounded-2xl bg-teal-500/10 text-teal-400 border border-teal-500/30 shadow-[0_0_40px_rgba(20,184,166,0.2)]"
+            >
+              <motion.div
+                initial={{ width: "3rem", height: "3rem" }}
+                animate={heroScrolled
+                  ? { width: "1.75rem", height: "1.75rem" }
+                  : { width: "3rem", height: "3rem" }
+                }
+                transition={{ duration: 0.35, ease: "easeInOut" }}
+              >
+                <IconComponent className="w-full h-full" />
+              </motion.div>
+            </motion.div>
             <div className="flex-1">
-              <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-5xl">
+              <motion.h1
+                initial={isMobile ? { fontSize: "1.875rem", lineHeight: "2.25rem" } : { fontSize: "3rem", lineHeight: "1" }}
+                animate={isMobile && heroScrolled
+                  ? { fontSize: "1.125rem", lineHeight: "1.75rem" }
+                  : (isMobile ? { fontSize: "1.875rem", lineHeight: "2.25rem" } : { fontSize: "3rem", lineHeight: "1" })
+                }
+                transition={{ duration: 0.35, ease: "easeInOut" }}
+                className="font-extrabold tracking-tight text-white sm:text-5xl"
+              >
                 Sell Your Used Items Fast
-              </h1>
-              {/* Value Props — glassmorphism cards */}
-              <div className="mt-6 grid grid-cols-2 gap-2.5 sm:gap-3">
-                <div className="flex items-start gap-2 sm:gap-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm px-3 py-2.5 sm:px-4 sm:py-3">
-                  <div className="h-7 w-7 sm:h-8 sm:w-8 shrink-0 rounded-xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400">
-                    <ShieldCheck className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                  </div>
-                  <div>
-                    <p className="text-xs sm:text-sm font-bold text-white">Honest Market Valuation</p>
-                    <p className="text-[10px] sm:text-xs text-slate-400 leading-relaxed mt-0.5 hidden sm:block">Fair, transparent price based on current Dhaka market data.</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-2 sm:gap-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm px-3 py-2.5 sm:px-4 sm:py-3">
-                  <div className="h-7 w-7 sm:h-8 sm:w-8 shrink-0 rounded-xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400">
-                    <BadgeDollarSign className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                  </div>
-                  <div>
-                    <p className="text-xs sm:text-sm font-bold text-white">Cash Paid on the Spot</p>
-                    <p className="text-[10px] sm:text-xs text-slate-400 leading-relaxed mt-0.5 hidden sm:block">Agree to our offer and get paid immediately — no waiting.</p>
-                  </div>
-                </div>
-              </div>
+              </motion.h1>
             </div>
           </div>
         </motion.div>
@@ -220,8 +230,8 @@ export default function BuyingPage({ service }: BuyingPageProps) {
 
 
             {/* Main Card */}
-            <div className="relative overflow-hidden rounded-3xl bg-slate-900 text-white border border-slate-800 shadow-2xl p-6 sm:p-8">
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-r from-teal-600/90 to-teal-500/90 py-1.5 px-4 text-center text-[11px] font-bold text-white tracking-wide flex items-center justify-center gap-1">
+            <div className="relative overflow-hidden rounded-3xl bg-slate-900 text-white border border-slate-800 shadow-2xl pt-12 pb-6 px-6 sm:pt-14 sm:pb-8 sm:px-8">
+              <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-teal-600/90 to-teal-500/90 py-1.5 px-4 text-center text-[11px] font-bold text-white tracking-wide flex items-center justify-center gap-1">
                 <Heart className="h-3 w-3 fill-white animate-pulse" />
                 10% of every deal supports local orphans in Dhaka
               </div>
@@ -478,10 +488,55 @@ export default function BuyingPage({ service }: BuyingPageProps) {
                 <Phone className="h-4 w-4 text-white fill-white" /> Call Support
               </a>
             </div>
+
+            {/* Gallery */}
+            <div className="mt-8">
+              <GallerySection
+                title="Items We Accept"
+                subtitle="What We Buy"
+                description="We purchase a wide range of used items in good to fair condition."
+                items={[
+                  { title: "Furniture & Home Items", area: "Sofas, Tables, Wardrobes & More", img: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=500&q=80", subtitle: "Free evaluation — no obligation" },
+                  { title: "Consumer Electronics", area: "Laptops, TVs, ACs, Appliances", img: "https://images.unsplash.com/photo-1593640408182-31c228b42e0e?w=500&q=80", subtitle: "Free evaluation — no obligation" },
+                  { title: "Vehicles & Cars", area: "All Brands & Conditions", img: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=500&q=80", subtitle: "Free evaluation — no obligation" },
+                  { title: "Full Apartment Clearance", area: "We Buy Everything at Once", img: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=500&q=80", subtitle: "Free evaluation — no obligation" },
+                ]}
+              />
+            </div>
           </div>
 
           {/* LEFT — Trust, Gallery, Testimonials, FAQ */}
           <div className="w-full order-2 space-y-12">
+            {/* Value Propositions */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
+              <div className="flex items-start gap-2 sm:gap-3 rounded-2xl bg-slate-100 border border-slate-200 px-3 py-2.5 sm:px-4 sm:py-3">
+                <div className="h-7 w-7 sm:h-8 sm:w-8 shrink-0 rounded-xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-600">
+                  <ShieldCheck className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                </div>
+                <div>
+                  <p className="text-xs sm:text-sm font-bold text-slate-900">Honest Market Valuation</p>
+                  <p className="text-[10px] sm:text-xs text-slate-500 leading-relaxed mt-0.5">Fair, transparent price based on current Dhaka market data.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-2 sm:gap-3 rounded-2xl bg-slate-100 border border-slate-200 px-3 py-2.5 sm:px-4 sm:py-3">
+                <div className="h-7 w-7 sm:h-8 sm:w-8 shrink-0 rounded-xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-600">
+                  <BadgeDollarSign className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                </div>
+                <div>
+                  <p className="text-xs sm:text-sm font-bold text-slate-900">Cash Paid on the Spot</p>
+                  <p className="text-[10px] sm:text-xs text-slate-500 leading-relaxed mt-0.5">Agree to our offer and get paid immediately — no waiting.</p>
+                </div>
+              </div>
+            </div>
+
+
+            {/* Testimonials */}
+            <TestimonialsSection
+              testimonials={service.testimonials}
+              subtitle="Expats & Departing Residents"
+              title="What Sellers Say"
+            />
+
             {/* How It Works */}
             <FeaturesSection
               title="How Buying Works"
@@ -494,26 +549,6 @@ export default function BuyingPage({ service }: BuyingPageProps) {
                 { step: 3, title: "Get a Fair Quote", desc: "We assess each item and give you a transparent, market-rate offer." },
                 { step: 4, title: "Cash on the Spot", desc: "Accept the offer and we pay you immediately and take everything away." },
               ]}
-            />
-
-            {/* Gallery */}
-            <GallerySection
-              title="Items We Accept"
-              subtitle="What We Buy"
-              description="We purchase a wide range of used items in good to fair condition."
-              items={[
-                { title: "Furniture & Home Items", area: "Sofas, Tables, Wardrobes & More", img: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=500&q=80", subtitle: "Free evaluation — no obligation" },
-                { title: "Consumer Electronics", area: "Laptops, TVs, ACs, Appliances", img: "https://images.unsplash.com/photo-1593640408182-31c228b42e0e?w=500&q=80", subtitle: "Free evaluation — no obligation" },
-                { title: "Vehicles & Cars", area: "All Brands & Conditions", img: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=500&q=80", subtitle: "Free evaluation — no obligation" },
-                { title: "Full Apartment Clearance", area: "We Buy Everything at Once", img: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=500&q=80", subtitle: "Free evaluation — no obligation" },
-              ]}
-            />
-
-            {/* Testimonials */}
-            <TestimonialsSection
-              testimonials={service.testimonials}
-              subtitle="Expats & Departing Residents"
-              title="What Sellers Say"
             />
 
             <FAQSection

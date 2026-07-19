@@ -23,7 +23,6 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { iconMap, type ServiceType } from "@/lib/servicesData";
-import FadeInSection from "@/components/ui/FadeInSection";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/sections/Footer";
 import { cn } from "@/lib/utils";
@@ -159,61 +158,75 @@ export default function RepairRedesign({ service }: RepairRedesignProps) {
       <Navbar />
 
       {/* Hero */}
-      <section className="relative bg-slate-950 pt-28 pb-16 overflow-hidden">
+      <section className="relative bg-slate-950 pt-28 pb-8 overflow-hidden">
         <div className="absolute inset-0 opacity-20">
           <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${service.heroImage})` }} />
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-slate-950" />
         </div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(20,184,166,0.1),transparent_60%)]" />
-        <FadeInSection className="relative mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="flex flex-row items-start gap-4 sm:gap-6 md:gap-8">
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="relative mx-auto max-w-7xl px-6 lg:px-8"
+        >
+          <div className="flex flex-row items-center gap-4 sm:gap-6 md:gap-8">
             <div className="hidden md:flex h-14 w-14 sm:h-20 sm:w-20 md:h-24 md:w-24 shrink-0 items-center justify-center rounded-2xl sm:rounded-3xl bg-teal-500/10 text-teal-400 border border-teal-500/30 shadow-[0_0_40px_rgba(20,184,166,0.2)]">
               <IconComponent className="h-7 w-7 sm:h-10 sm:w-10 md:h-12 md:w-12" />
             </div>
-            <div className="max-w-2xl">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-teal-500/10 px-3 py-1 text-xs font-semibold text-teal-400 ring-1 ring-inset ring-teal-500/20">
-                <ShieldCheck className="h-3.5 w-3.5" /> Certified Technicians — Dhaka
-              </span>
-              <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-white sm:text-5xl">
+            <div className="flex-1">
+              <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-5xl">
                 Book a Repair. Fixed Today.
               </h1>
-              <p className="mt-4 text-base sm:text-lg text-slate-400 leading-relaxed">
-                AC not cooling? Fridge making noise? TV screen flickering? Our certified technicians arrive at your doorstep, diagnose the issue on the spot, and fix it right — with a 30-day warranty on every repair.
-              </p>
+              {/* Value Props — glassmorphism cards */}
+              <div className="mt-6 grid grid-cols-2 gap-2.5 sm:gap-3">
+                <div className="flex items-start gap-2 sm:gap-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm px-3 py-2.5 sm:px-4 sm:py-3">
+                  <div className="h-7 w-7 sm:h-8 sm:w-8 shrink-0 rounded-xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400">
+                    <ShieldCheck className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                  </div>
+                  <div>
+                    <p className="text-xs sm:text-sm font-bold text-white">30-Day Repair Warranty</p>
+                    <p className="text-[10px] sm:text-xs text-slate-400 leading-relaxed mt-0.5 hidden sm:block">Same fault returns within 30 days? We fix it free.</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2 sm:gap-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm px-3 py-2.5 sm:px-4 sm:py-3">
+                  <div className="h-7 w-7 sm:h-8 sm:w-8 shrink-0 rounded-xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400">
+                    <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                  </div>
+                  <div>
+                    <p className="text-xs sm:text-sm font-bold text-white">Same-Day Service</p>
+                    <p className="text-[10px] sm:text-xs text-slate-400 leading-relaxed mt-0.5 hidden sm:block">Book before noon, technician dispatched same day.</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </FadeInSection>
+        </motion.div>
       </section>
 
       {/* Main Body */}
-      <main className="mx-auto max-w-7xl w-full px-6 lg:px-8 py-10 sm:py-14">
-        <FadeInSection delay={100}>
-          <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12">
+      <main className="mx-auto max-w-7xl w-full px-6 lg:px-8 py-6 sm:py-8">
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.15 }}
+          className="flex flex-col gap-8 lg:gap-12 max-w-4xl mx-auto"
+        >
 
           {/* RIGHT — Wizard */}
-          <div className="w-full lg:w-[480px] shrink-0 order-1 lg:order-2 lg:sticky lg:top-24">
+          <div className="w-full order-1">
 
-            {/* Live Status */}
-            <div className="mb-4 flex items-center justify-between rounded-xl bg-white px-4 py-2.5 shadow-sm ring-1 ring-slate-100">
-              <div className="flex items-center gap-2">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-                </span>
-                <span className="text-xs font-semibold text-slate-700">Technicians Available for Home Visits</span>
-              </div>
-              <span className="text-[10px] font-bold tracking-wider text-slate-400 uppercase">Same Day</span>
-            </div>
+
 
             {/* Booking Card */}
             <div className="relative overflow-hidden rounded-3xl bg-slate-900 text-white border border-slate-800 shadow-2xl p-6 sm:p-8">
-              <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-teal-600/90 to-teal-500/90 py-1.5 px-4 text-center text-[11px] font-bold text-white tracking-wide flex items-center justify-center gap-1">
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-r from-teal-600/90 to-teal-500/90 py-1.5 px-4 text-center text-[11px] font-bold text-white tracking-wide flex items-center justify-center gap-1">
                 <Heart className="h-3 w-3 fill-white animate-pulse" />
                 10% of every repair job supports local orphans in Dhaka
               </div>
 
               {submitted ? (
-                <div className="pt-6 text-center">
+                <div className="pb-6 text-center">
                   <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-teal-500/10 border border-teal-500/30 text-teal-400 mb-5">
                     <Check className="h-8 w-8" />
                   </div>
@@ -238,7 +251,7 @@ export default function RepairRedesign({ service }: RepairRedesignProps) {
                   </div>
                 </div>
               ) : (
-                <div className="pt-6">
+                <div className="pb-6">
                   {/* Tabs */}
                   {step === 1 && (
                     <div className="grid grid-cols-4 gap-1 bg-slate-800/60 p-1 rounded-xl mb-6">
@@ -543,40 +556,19 @@ export default function RepairRedesign({ service }: RepairRedesignProps) {
             {/* Quick Contact */}
             <div className="mt-4 grid grid-cols-2 gap-3">
               <a href="https://wa.me/8801920149986" target="_blank" rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 rounded-xl bg-white border border-slate-200 py-3 text-xs font-bold text-slate-800 hover:bg-slate-50 transition-colors shadow-sm">
-                <MessageCircle className="h-4 w-4 text-green-600 fill-green-600" /> WhatsApp Us
+                className="flex items-center justify-center gap-2 rounded-xl bg-green-600 py-3 text-xs font-bold text-white hover:bg-green-500 transition-colors shadow-sm shadow-green-900/20">
+                <MessageCircle className="h-4 w-4 text-white fill-white" /> WhatsApp Us
               </a>
               <a href="tel:+8801920149986"
-                className="flex items-center justify-center gap-2 rounded-xl bg-white border border-slate-200 py-3 text-xs font-bold text-slate-800 hover:bg-slate-50 transition-colors shadow-sm">
-                <Phone className="h-4 w-4 text-teal-600 fill-teal-600" /> Call Support
+                className="flex items-center justify-center gap-2 rounded-xl bg-slate-900 py-3 text-xs font-bold text-white hover:bg-slate-800 transition-colors shadow-sm shadow-slate-900/20">
+                <Phone className="h-4 w-4 text-white fill-white" /> Call Support
               </a>
             </div>
           </div>
 
           {/* LEFT — Trust, Gallery, Testimonials, FAQ */}
-          <div className="w-full flex-1 order-2 lg:order-1 space-y-12">
+          <div className="w-full order-2 space-y-12">
 
-            {/* Value Props */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div className="rounded-2xl bg-white border border-slate-100 p-6 shadow-sm">
-                <div className="h-10 w-10 rounded-xl bg-teal-50 border border-teal-100 flex items-center justify-center text-teal-600 mb-4">
-                  <ShieldCheck className="h-5 w-5" />
-                </div>
-                <h3 className="text-base font-bold text-slate-900 mb-1">30-Day Repair Warranty</h3>
-                <p className="text-xs text-slate-500 leading-relaxed">
-                  Every repair is guaranteed. If the same fault returns within 30 days, we come back and fix it at zero cost.
-                </p>
-              </div>
-              <div className="rounded-2xl bg-white border border-slate-100 p-6 shadow-sm">
-                <div className="h-10 w-10 rounded-xl bg-teal-50 border border-teal-100 flex items-center justify-center text-teal-600 mb-4">
-                  <Clock className="h-5 w-5" />
-                </div>
-                <h3 className="text-base font-bold text-slate-900 mb-1">Same-Day Service</h3>
-                <p className="text-xs text-slate-500 leading-relaxed">
-                  Book before noon and we dispatch a technician the same day. Most repairs are completed in a single visit.
-                </p>
-              </div>
-            </div>
 
             {/* How It Works */}
             <div className="space-y-4">
@@ -698,8 +690,7 @@ export default function RepairRedesign({ service }: RepairRedesignProps) {
             </div>
 
           </div>
-        </div>
-        </FadeInSection>
+        </motion.div>
       </main>
 
       <Footer />

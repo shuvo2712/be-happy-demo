@@ -22,6 +22,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { iconMap, type ServiceType } from "@/lib/servicesData";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/sections/Footer";
+import TestimonialsSection from "@/components/sections/TestimonialsSection";
 import { cn } from "@/lib/utils";
 
 interface TourRedesignProps {
@@ -116,12 +117,6 @@ export default function TourRedesign({ service }: TourRedesignProps) {
   };
 
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const [activeTestimonial, setActiveTestimonial] = useState(0);
-  useEffect(() => {
-    const t = setInterval(() => setActiveTestimonial((a) => (a + 1) % service.testimonials.length), 4500);
-    return () => clearInterval(t);
-  }, [service.testimonials.length]);
-
   // Style helpers
   const selBtn = (active: boolean) =>
     cn(
@@ -515,38 +510,11 @@ export default function TourRedesign({ service }: TourRedesignProps) {
             </div>
 
             {/* Testimonials */}
-            <div className="bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-xl text-white">
-              <span className="text-[10px] uppercase font-bold tracking-wider text-teal-400">Tourists & Delegations</span>
-              <h3 className="text-xl font-bold mt-1 mb-6">What Visitors Say</h3>
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeTestimonial}
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -15 }}
-                  transition={{ duration: 0.4 }}
-                  className="space-y-4"
-                >
-                  <div className="flex gap-1">
-                    {Array.from({ length: service.testimonials[activeTestimonial].rating }).map((_, i) => (
-                      <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
-                    ))}
-                  </div>
-                  <blockquote className="text-sm text-slate-300 italic leading-relaxed">
-                    &ldquo;{service.testimonials[activeTestimonial].quote}&rdquo;
-                  </blockquote>
-                  <div className="flex items-center gap-3 pt-2">
-                    <div className="h-9 w-9 rounded-full bg-teal-500/20 border border-teal-500/40 flex items-center justify-center text-teal-400 font-bold text-sm">
-                      {service.testimonials[activeTestimonial].name.charAt(0)}
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold">{service.testimonials[activeTestimonial].name}</p>
-                      <p className="text-[10px] text-slate-500">{service.testimonials[activeTestimonial].location}</p>
-                    </div>
-                  </div>
-                </motion.div>
-              </AnimatePresence>
-            </div>
+            <TestimonialsSection 
+              testimonials={service.testimonials}
+              subtitle="Tourists & Delegations"
+              title="What Visitors Say"
+            />
 
             {/* FAQ */}
             <div className="space-y-4">

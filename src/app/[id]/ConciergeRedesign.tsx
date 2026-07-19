@@ -24,6 +24,9 @@ import { iconMap, type ServiceType } from "@/lib/servicesData";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/sections/Footer";
 import TestimonialsSection from "@/components/sections/TestimonialsSection";
+import FAQSection from "@/components/sections/FAQSection";
+import GallerySection from "@/components/sections/GallerySection";
+import FeaturesSection from "@/components/sections/FeaturesSection";
 import { cn } from "@/lib/utils";
 
 interface ConciergeRedesignProps {
@@ -125,7 +128,7 @@ export default function ConciergeRedesign({ service }: ConciergeRedesignProps) {
     setHmAreas([]); setHmBudget(""); setHmGender(""); setHmMoveDate("");
   };
 
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  // Removed local faq state
   // Reusable selection button style
   const selBtn = (active: boolean) =>
     cn(
@@ -551,34 +554,32 @@ export default function ConciergeRedesign({ service }: ConciergeRedesignProps) {
           {/* LEFT COLUMN — Trust, Gallery, Testimonials, FAQ */}
           <div className="w-full order-2 space-y-12">
 
+            {/* How Concierge Works */}
+            <FeaturesSection 
+              title="How Concierge Works"
+              subtitle="Simple Process"
+              description=""
+              layout="grid"
+              items={[
+                { step: 1, title: "Submit Your Request", desc: "From hotel bookings to luxury car rentals." },
+                { step: 2, title: "Fast Confirmation", desc: "We secure your reservation using our premium network." },
+                { step: 3, title: "Dedicated Support", desc: "24/7 on-call assistance for the duration of your service." },
+                { step: 4, title: "VIP Treatment", desc: "Enjoy priority access without the logistical stress." },
+              ]}
+            />
 
             {/* Service Showcase Gallery */}
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider text-teal-600 mb-1">What We Arrange</h3>
-                <h2 className="text-2xl font-extrabold text-slate-900">Our Concierge Services</h2>
-                <p className="text-xs text-slate-500">From a last-minute airport transfer to a week-long hotel stay — we handle it all.</p>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {[
-                  { title: "5-Star Hotel Reservations", area: "Gulshan & Baridhara", img: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500&q=80" },
-                  { title: "Professional Airport Drivers", area: "HSIA, Dhaka", img: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=500&q=80" },
-                  { title: "Luxury Car Rentals", area: "All Areas, Dhaka", img: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=500&q=80" },
-                  { title: "Flight & Travel Planning", area: "International Departures", img: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=500&q=80" },
-                ].map((item, idx) => (
-                  <div key={idx} className="group relative overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm hover:shadow-md transition-shadow">
-                    <div className="aspect-[4/3] w-full overflow-hidden bg-slate-100 relative">
-                      <img src={item.img} alt={item.title} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
-                      <span className="absolute bottom-2 left-2 rounded-lg bg-slate-900/80 backdrop-blur-sm text-[10px] font-bold text-white px-2 py-1">{item.area}</span>
-                    </div>
-                    <div className="p-4">
-                      <h4 className="text-xs font-bold text-slate-800">{item.title}</h4>
-                      <p className="text-[10px] text-slate-400 mt-0.5">Vetted Concierge Partner</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <GallerySection 
+              title="Our Concierge Services"
+              subtitle="What We Arrange"
+              description="From a last-minute airport transfer to a week-long hotel stay — we handle it all."
+              items={[
+                { title: "5-Star Hotel Reservations", area: "Gulshan & Baridhara", img: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500&q=80", subtitle: "Vetted Concierge Partner" },
+                { title: "Professional Airport Drivers", area: "HSIA, Dhaka", img: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=500&q=80", subtitle: "Vetted Concierge Partner" },
+                { title: "Luxury Car Rentals", area: "All Areas, Dhaka", img: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=500&q=80", subtitle: "Vetted Concierge Partner" },
+                { title: "Flight & Travel Planning", area: "International Departures", img: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=500&q=80", subtitle: "Vetted Concierge Partner" },
+              ]}
+            />
 
             {/* Testimonials */}
             <TestimonialsSection 
@@ -588,40 +589,11 @@ export default function ConciergeRedesign({ service }: ConciergeRedesignProps) {
             />
 
             {/* FAQ */}
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider text-teal-600 mb-1">Knowledge Base</h3>
-                <h2 className="text-2xl font-extrabold text-slate-900">Concierge FAQ</h2>
-              </div>
-              <div className="space-y-2">
-                {service.faqs.map((faq, idx) => {
-                  const isOpen = openFaq === idx;
-                  return (
-                    <div key={idx} className="border border-slate-200 rounded-xl bg-white overflow-hidden">
-                      <button
-                        onClick={() => setOpenFaq(isOpen ? null : idx)}
-                        className="w-full flex items-center justify-between gap-4 px-5 py-4 text-left font-bold text-slate-800 text-xs sm:text-sm hover:bg-slate-50 transition-colors"
-                      >
-                        <span>{faq.question}</span>
-                        <ChevronDown className={cn("h-4 w-4 text-teal-600 transition-transform", isOpen && "rotate-180")} />
-                      </button>
-                      <AnimatePresence>
-                        {isOpen && (
-                          <motion.div
-                            initial={{ height: 0 }}
-                            animate={{ height: "auto" }}
-                            exit={{ height: 0 }}
-                            className="overflow-hidden border-t border-slate-100"
-                          >
-                            <p className="px-5 py-3 text-xs text-slate-600 leading-relaxed bg-slate-50/50">{faq.answer}</p>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+            <FAQSection 
+              faqs={service.faqs}
+              subtitle="Knowledge Base"
+              title="Concierge FAQ"
+            />
           </div>
         </motion.div>
       </main>

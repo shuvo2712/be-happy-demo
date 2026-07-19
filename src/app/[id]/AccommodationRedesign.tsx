@@ -23,6 +23,9 @@ import { iconMap, type ServiceType } from "@/lib/servicesData";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/sections/Footer";
 import TestimonialsSection from "@/components/sections/TestimonialsSection";
+import FAQSection from "@/components/sections/FAQSection";
+import GallerySection from "@/components/sections/GallerySection";
+import FeaturesSection from "@/components/sections/FeaturesSection";
 import { cn } from "@/lib/utils";
 
 interface AccommodationRedesignProps {
@@ -132,9 +135,7 @@ export default function AccommodationRedesign({ service }: AccommodationRedesign
     setRelFastTrack(false);
   };
 
-  // Accordion faq helper
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
-
+  // Removed local faq state
   const IconComponent = iconMap[service.iconName as keyof typeof iconMap];
 
   return (
@@ -816,64 +817,56 @@ export default function AccommodationRedesign({ service }: AccommodationRedesign
           {/* ── RIGHT COLUMN: Detailed Content Sections ── */}
           <div className="w-full order-2 space-y-12">
             
+            {/* How Relocation Works */}
+            <FeaturesSection 
+              title="How Relocation Works"
+              subtitle="Simple Process"
+              description=""
+              layout="grid"
+              items={[
+                { step: 1, title: "Share Your Requirements", desc: "Tell us your preferences, budget, and move-in date." },
+                { step: 2, title: "We Curate Options", desc: "We handpick verified properties matching your needs." },
+                { step: 3, title: "Guided Viewing", desc: "We arrange accompanied physical or virtual tours." },
+                { step: 4, title: "Sign & Settle In", desc: "We handle the paperwork for a seamless move-in." },
+              ]}
+            />
 
             {/* Premium Space Previews Grid */}
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider text-teal-600 mb-1">Verified Spaces</h3>
-                <h2 className="text-2xl font-extrabold text-slate-900">Featured Premium Listings</h2>
-                <p className="text-xs text-slate-500">A glimpse of handpicked rental properties and co-working environments.</p>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {[
-                  {
-                    title: "Luxury 3-BHK Apartment",
-                    area: "Gulshan-2, Dhaka",
-                    price: "৳120,000 / mo",
-                    img: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=500&q=80",
-                  },
-                  {
-                    title: "Modern Premium Co-working",
-                    area: "Banani, Dhaka",
-                    price: "৳15,000 / seat",
-                    img: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=500&q=80",
-                  },
-                  {
-                    title: "Elegant 2-BHK Flat",
-                    area: "Dhanmondi, Dhaka",
-                    price: "৳65,000 / mo",
-                    img: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=500&q=80",
-                  },
-                  {
-                    title: "Vast Corporate Bare Office",
-                    area: "Tejgaon, Dhaka",
-                    price: "৳250,000 / mo",
-                    img: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=500&q=80",
-                  },
-                ].map((item, idx) => (
-                  <div key={idx} className="group relative overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm hover:shadow-md transition-shadow">
-                    <div className="aspect-[4/3] w-full overflow-hidden bg-slate-100 relative">
-                      <img
-                        src={item.img}
-                        alt={item.title}
-                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                      />
-                      <span className="absolute bottom-2 left-2 rounded-lg bg-slate-900/80 backdrop-blur-sm text-[10px] font-bold text-white px-2 py-1">
-                        {item.area}
-                      </span>
-                    </div>
-                    <div className="p-4 flex items-center justify-between">
-                      <div>
-                        <h4 className="text-xs font-bold text-slate-800 truncate max-w-[180px]">{item.title}</h4>
-                        <p className="text-[10px] text-slate-400 mt-0.5">Vetted Listing</p>
-                      </div>
-                      <span className="text-xs font-bold text-teal-600 bg-teal-55 px-2 py-1 rounded-md">{item.price}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <GallerySection
+              title="Featured Premium Listings"
+              subtitle="Verified Spaces"
+              description="A glimpse of handpicked rental properties and co-working environments."
+              items={[
+                {
+                  title: "Luxury 3-BHK Apartment",
+                  area: "Gulshan-2, Dhaka",
+                  price: "৳120,000 / mo",
+                  img: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=500&q=80",
+                  subtitle: "Vetted Listing",
+                },
+                {
+                  title: "Modern Premium Co-working",
+                  area: "Banani, Dhaka",
+                  price: "৳15,000 / seat",
+                  img: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=500&q=80",
+                  subtitle: "Vetted Listing",
+                },
+                {
+                  title: "Elegant 2-BHK Flat",
+                  area: "Dhanmondi, Dhaka",
+                  price: "৳65,000 / mo",
+                  img: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=500&q=80",
+                  subtitle: "Vetted Listing",
+                },
+                {
+                  title: "Vast Corporate Bare Office",
+                  area: "Tejgaon, Dhaka",
+                  price: "৳250,000 / mo",
+                  img: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=500&q=80",
+                  subtitle: "Vetted Listing",
+                },
+              ]}
+            />
 
             {/* Testimonials */}
             <TestimonialsSection 
@@ -883,42 +876,11 @@ export default function AccommodationRedesign({ service }: AccommodationRedesign
             />
 
             {/* FAQ Accordion */}
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider text-teal-600 mb-1">Knowledge Base</h3>
-                <h2 className="text-2xl font-extrabold text-slate-900">Accommodation FAQ</h2>
-              </div>
-              <div className="space-y-2">
-                {service.faqs.map((faq, idx) => {
-                  const isOpen = openFaq === idx;
-                  return (
-                    <div key={idx} className="border border-slate-200 rounded-xl bg-white overflow-hidden">
-                      <button
-                        onClick={() => setOpenFaq(isOpen ? null : idx)}
-                        className="w-full flex items-center justify-between gap-4 px-5 py-4 text-left font-bold text-slate-800 text-xs sm:text-sm hover:bg-slate-50 transition-colors"
-                      >
-                        <span>{faq.question}</span>
-                        <ChevronDown className={cn("h-4 w-4 text-teal-600 transition-transform", isOpen && "rotate-180")} />
-                      </button>
-                      <AnimatePresence>
-                        {isOpen && (
-                          <motion.div
-                            initial={{ height: 0 }}
-                            animate={{ height: "auto" }}
-                            exit={{ height: 0 }}
-                            className="overflow-hidden border-t border-slate-100"
-                          >
-                            <p className="px-5 py-3 text-xs text-slate-600 leading-relaxed bg-slate-50/50">
-                              {faq.answer}
-                            </p>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+            <FAQSection
+              faqs={service.faqs}
+              subtitle="Knowledge Base"
+              title="Accommodation FAQ"
+            />
           </div>
         </motion.div>
       </main>

@@ -23,6 +23,9 @@ import { iconMap, type ServiceType } from "@/lib/servicesData";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/sections/Footer";
 import TestimonialsSection from "@/components/sections/TestimonialsSection";
+import FAQSection from "@/components/sections/FAQSection";
+import GallerySection from "@/components/sections/GallerySection";
+import FeaturesSection from "@/components/sections/FeaturesSection";
 import { cn } from "@/lib/utils";
 
 interface TourRedesignProps {
@@ -116,7 +119,7 @@ export default function TourRedesign({ service }: TourRedesignProps) {
     setCityDate(""); setCityDuration(""); setCityGroupSize(""); setCitySpots([]); setCityLanguage(""); setCityInterests([]);
   };
 
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  // Removed local faq state
   // Style helpers
   const selBtn = (active: boolean) =>
     cn(
@@ -480,34 +483,32 @@ export default function TourRedesign({ service }: TourRedesignProps) {
           {/* LEFT — Trust, Gallery, Testimonials, FAQ */}
           <div className="w-full order-2 space-y-12">
 
+            {/* How Tour Booking Works */}
+            <FeaturesSection 
+              title="How Tour Booking Works"
+              subtitle="Simple Process"
+              description=""
+              layout="grid"
+              items={[
+                { step: 1, title: "Select Your Interests", desc: "Choose the spots you want to visit and your schedule." },
+                { step: 2, title: "Meet Your Guide", desc: "A vetted local expert crafts a personalized itinerary." },
+                { step: 3, title: "Enjoy the Experience", desc: "Dive deep into authentic local culture and hidden gems." },
+                { step: 4, title: "Safe Return", desc: "We ensure safe transportation and drop you off securely." },
+              ]}
+            />
 
             {/* Tour Gallery */}
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider text-teal-600 mb-1">Real Dhaka</h3>
-                <h2 className="text-2xl font-extrabold text-slate-900">What You Will Experience</h2>
-                <p className="text-xs text-slate-500">Iconic landmarks, hidden markets, and authentic local culture — all with an expert guide by your side.</p>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {[
-                  { title: "Lalbagh Fort", area: "Old Dhaka", img: "https://images.unsplash.com/photo-1530521954074-e64f6810b32d?w=500&q=80" },
-                  { title: "Ahsan Manzil Palace", area: "Sadarghat, Dhaka", img: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&q=80" },
-                  { title: "Old Dhaka Markets", area: "Chawkbazar, Dhaka", img: "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=500&q=80" },
-                  { title: "Hatirjheel Lake Park", area: "Rampura, Dhaka", img: "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=500&q=80" },
-                ].map((item, idx) => (
-                  <div key={idx} className="group relative overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm hover:shadow-md transition-shadow">
-                    <div className="aspect-[4/3] w-full overflow-hidden bg-slate-100 relative">
-                      <img src={item.img} alt={item.title} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
-                      <span className="absolute bottom-2 left-2 rounded-lg bg-slate-900/80 backdrop-blur-sm text-[10px] font-bold text-white px-2 py-1">{item.area}</span>
-                    </div>
-                    <div className="p-4">
-                      <h4 className="text-xs font-bold text-slate-800">{item.title}</h4>
-                      <p className="text-[10px] text-slate-400 mt-0.5">Guided Experience Available</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <GallerySection 
+              title="What You Will Experience"
+              subtitle="Real Dhaka"
+              description="Iconic landmarks, hidden markets, and authentic local culture — all with an expert guide by your side."
+              items={[
+                { title: "Lalbagh Fort", area: "Old Dhaka", img: "https://images.unsplash.com/photo-1530521954074-e64f6810b32d?w=500&q=80", subtitle: "Guided Experience Available" },
+                { title: "Ahsan Manzil Palace", area: "Sadarghat, Dhaka", img: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&q=80", subtitle: "Guided Experience Available" },
+                { title: "Old Dhaka Markets", area: "Chawkbazar, Dhaka", img: "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=500&q=80", subtitle: "Guided Experience Available" },
+                { title: "Hatirjheel Lake Park", area: "Rampura, Dhaka", img: "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=500&q=80", subtitle: "Guided Experience Available" },
+              ]}
+            />
 
             {/* Testimonials */}
             <TestimonialsSection 
@@ -517,40 +518,11 @@ export default function TourRedesign({ service }: TourRedesignProps) {
             />
 
             {/* FAQ */}
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider text-teal-600 mb-1">Knowledge Base</h3>
-                <h2 className="text-2xl font-extrabold text-slate-900">Tour Guide FAQ</h2>
-              </div>
-              <div className="space-y-2">
-                {service.faqs.map((faq, idx) => {
-                  const isOpen = openFaq === idx;
-                  return (
-                    <div key={idx} className="border border-slate-200 rounded-xl bg-white overflow-hidden">
-                      <button
-                        onClick={() => setOpenFaq(isOpen ? null : idx)}
-                        className="w-full flex items-center justify-between gap-4 px-5 py-4 text-left font-bold text-slate-800 text-xs sm:text-sm hover:bg-slate-50 transition-colors"
-                      >
-                        <span>{faq.question}</span>
-                        <ChevronDown className={cn("h-4 w-4 text-teal-600 transition-transform", isOpen && "rotate-180")} />
-                      </button>
-                      <AnimatePresence>
-                        {isOpen && (
-                          <motion.div
-                            initial={{ height: 0 }}
-                            animate={{ height: "auto" }}
-                            exit={{ height: 0 }}
-                            className="overflow-hidden border-t border-slate-100"
-                          >
-                            <p className="px-5 py-3 text-xs text-slate-600 leading-relaxed bg-slate-50/50">{faq.answer}</p>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+            <FAQSection 
+              faqs={service.faqs}
+              subtitle="Knowledge Base"
+              title="Tour Guide FAQ"
+            />
 
           </div>
         </motion.div>

@@ -26,6 +26,9 @@ import { iconMap, type ServiceType } from "@/lib/servicesData";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/sections/Footer";
 import TestimonialsSection from "@/components/sections/TestimonialsSection";
+import FAQSection from "@/components/sections/FAQSection";
+import GallerySection from "@/components/sections/GallerySection";
+import FeaturesSection from "@/components/sections/FeaturesSection";
 import { cn } from "@/lib/utils";
 
 interface RepairRedesignProps {
@@ -132,7 +135,7 @@ export default function RepairRedesign({ service }: RepairRedesignProps) {
   const removeFile = (i: number) => setUploadedFiles((p) => p.filter((_, idx) => idx !== i));
   const formatSize = (b: number) => b < 1048576 ? `${(b / 1024).toFixed(0)} KB` : `${(b / 1048576).toFixed(1)} MB`;
 
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  // Removed local faq state
   // Style helpers
   const selBtn = (active: boolean) =>
     cn(
@@ -566,58 +569,31 @@ export default function RepairRedesign({ service }: RepairRedesignProps) {
 
 
             {/* How It Works */}
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider text-teal-600 mb-1">Simple Process</h3>
-                <h2 className="text-2xl font-extrabold text-slate-900">How Repair Booking Works</h2>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {[
-                  { step: 1, title: "Describe the Issue", desc: "Tell us what's broken and optionally upload photos. Our team can prepare the right tools in advance." },
-                  { step: 2, title: "Technician is Dispatched", desc: "A certified technician is assigned and calls to confirm before arriving at your location." },
-                  { step: 3, title: "Free Diagnosis & Quote", desc: "The technician inspects the appliance and gives you a transparent written quote — no hidden fees." },
-                  { step: 4, title: "Fixed with Warranty", desc: "Repair is completed using genuine parts. All work is backed by a 30-day return guarantee." },
-                ].map((s) => (
-                  <div key={s.step} className="flex gap-4 rounded-2xl bg-white border border-slate-100 p-5 shadow-sm">
-                    <div className="flex-shrink-0 h-10 w-10 rounded-full bg-teal-500 text-white font-extrabold text-base flex items-center justify-center shadow-[0_0_15px_rgba(20,184,166,0.25)]">
-                      {s.step}
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-slate-900 text-sm mb-0.5">{s.title}</h4>
-                      <p className="text-xs text-slate-500 leading-relaxed">{s.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <FeaturesSection 
+              title="How Repair Booking Works"
+              subtitle="Simple Process"
+              description=""
+              layout="grid"
+              items={[
+                { step: 1, title: "Describe the Issue", desc: "Tell us what's broken and optionally upload photos. Our team can prepare the right tools in advance." },
+                { step: 2, title: "Technician is Dispatched", desc: "A certified technician is assigned and calls to confirm before arriving at your location." },
+                { step: 3, title: "Free Diagnosis & Quote", desc: "The technician inspects the appliance and gives you a transparent written quote — no hidden fees." },
+                { step: 4, title: "Fixed with Warranty", desc: "Repair is completed using genuine parts. All work is backed by a 30-day return guarantee." },
+              ]}
+            />
 
             {/* Service Gallery */}
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider text-teal-600 mb-1">Appliance Services</h3>
-                <h2 className="text-2xl font-extrabold text-slate-900">What We Repair</h2>
-                <p className="text-xs text-slate-500">Certified technicians covering all major home and office appliances.</p>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {[
-                  { title: "Air Conditioner Servicing", area: "All Brands, All Capacities", img: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=500&q=80" },
-                  { title: "Refrigerator & Fridge Repair", area: "Gas Refill, Compressor & More", img: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=500&q=80" },
-                  { title: "Television & Display Repair", area: "Smart TV, LED, OLED", img: "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=500&q=80" },
-                  { title: "Home Electronics Maintenance", area: "Washing Machines, Ovens & More", img: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=500&q=80" },
-                ].map((item, idx) => (
-                  <div key={idx} className="group relative overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm hover:shadow-md transition-shadow">
-                    <div className="aspect-[4/3] w-full overflow-hidden bg-slate-100 relative">
-                      <img src={item.img} alt={item.title} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
-                      <span className="absolute bottom-2 left-2 rounded-lg bg-slate-900/80 backdrop-blur-sm text-[10px] font-bold text-white px-2 py-1">{item.area}</span>
-                    </div>
-                    <div className="p-4">
-                      <h4 className="text-xs font-bold text-slate-800">{item.title}</h4>
-                      <p className="text-[10px] text-slate-400 mt-0.5">30-Day Warranty Included</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <GallerySection 
+              title="What We Repair"
+              subtitle="Appliance Services"
+              description="Certified technicians covering all major home and office appliances."
+              items={[
+                { title: "Air Conditioner Servicing", area: "All Brands, All Capacities", img: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=500&q=80", subtitle: "30-Day Warranty Included" },
+                { title: "Refrigerator & Fridge Repair", area: "Gas Refill, Compressor & More", img: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=500&q=80", subtitle: "30-Day Warranty Included" },
+                { title: "Television & Display Repair", area: "Smart TV, LED, OLED", img: "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=500&q=80", subtitle: "30-Day Warranty Included" },
+                { title: "Home Electronics Maintenance", area: "Washing Machines, Ovens & More", img: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=500&q=80", subtitle: "30-Day Warranty Included" },
+              ]}
+            />
 
             {/* Testimonials */}
             <TestimonialsSection 
@@ -626,35 +602,11 @@ export default function RepairRedesign({ service }: RepairRedesignProps) {
               title="What Clients Say"
             />
             {/* FAQ */}
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider text-teal-600 mb-1">Common Questions</h3>
-                <h2 className="text-2xl font-extrabold text-slate-900">Repair & Maintenance FAQ</h2>
-              </div>
-              <div className="space-y-2">
-                {service.faqs.map((faq, idx) => {
-                  const isOpen = openFaq === idx;
-                  return (
-                    <div key={idx} className="border border-slate-200 rounded-xl bg-white overflow-hidden">
-                      <button
-                        onClick={() => setOpenFaq(isOpen ? null : idx)}
-                        className="w-full flex items-center justify-between gap-4 px-5 py-4 text-left font-bold text-slate-800 text-xs sm:text-sm hover:bg-slate-50 transition-colors"
-                      >
-                        <span>{faq.question}</span>
-                        <ChevronDown className={cn("h-4 w-4 text-teal-600 transition-transform", isOpen && "rotate-180")} />
-                      </button>
-                      <AnimatePresence>
-                        {isOpen && (
-                          <motion.div initial={{ height: 0 }} animate={{ height: "auto" }} exit={{ height: 0 }} className="overflow-hidden border-t border-slate-100">
-                            <p className="px-5 py-3 text-xs text-slate-600 leading-relaxed bg-slate-50/50">{faq.answer}</p>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+            <FAQSection 
+              faqs={service.faqs}
+              subtitle="Common Questions"
+              title="Repair & Maintenance FAQ"
+            />
 
           </div>
         </motion.div>

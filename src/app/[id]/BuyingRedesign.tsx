@@ -24,6 +24,9 @@ import { iconMap, type ServiceType } from "@/lib/servicesData";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/sections/Footer";
 import TestimonialsSection from "@/components/sections/TestimonialsSection";
+import FAQSection from "@/components/sections/FAQSection";
+import GallerySection from "@/components/sections/GallerySection";
+import FeaturesSection from "@/components/sections/FeaturesSection";
 import { cn } from "@/lib/utils";
 
 interface BuyingRedesignProps {
@@ -124,7 +127,7 @@ export default function BuyingRedesign({ service }: BuyingRedesignProps) {
   const removeFile = (i: number) => setUploadedFiles((p) => p.filter((_, idx) => idx !== i));
   const formatSize = (b: number) => b < 1048576 ? `${(b / 1024).toFixed(0)} KB` : `${(b / 1048576).toFixed(1)} MB`;
 
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  // Removed local faq state
 
   // Style helpers
   const selBtn = (active: boolean) =>
@@ -488,61 +491,32 @@ export default function BuyingRedesign({ service }: BuyingRedesignProps) {
 
           {/* LEFT — Trust, Gallery, Testimonials, FAQ */}
           <div className="w-full order-2 space-y-12">
-
-
             {/* How It Works */}
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider text-teal-600 mb-1">Simple Process</h3>
-                <h2 className="text-2xl font-extrabold text-slate-900">How Selling Works</h2>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {[
-                  { step: 1, title: "Submit Your Items", desc: "Tell us what you have and upload a few photos. Takes under 2 minutes." },
-                  { step: 2, title: "We Schedule a Visit", desc: "Our evaluator comes to your home — usually within 24 hours, at your convenience." },
-                  { step: 3, title: "Get a Fair Quote", desc: "We assess each item and give you a transparent, market-rate offer." },
-                  { step: 4, title: "Cash on the Spot", desc: "Accept the offer and we pay you immediately and take everything away." },
-                ].map((s) => (
-                  <div key={s.step} className="flex gap-4 rounded-2xl bg-white border border-slate-100 p-5 shadow-sm">
-                    <div className="flex-shrink-0 h-10 w-10 rounded-full bg-teal-500 text-white font-extrabold text-base flex items-center justify-center shadow-[0_0_15px_rgba(20,184,166,0.25)]">
-                      {s.step}
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-slate-900 text-sm mb-0.5">{s.title}</h4>
-                      <p className="text-xs text-slate-500 leading-relaxed">{s.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <FeaturesSection 
+              title="How Buying Works"
+              subtitle="Simple Process"
+              description=""
+              layout="grid"
+              items={[
+                { step: 1, title: "Submit Your Items", desc: "Tell us what you have and upload a few photos. Takes under 2 minutes." },
+                { step: 2, title: "We Schedule a Visit", desc: "Our evaluator comes to your home — usually within 24 hours, at your convenience." },
+                { step: 3, title: "Get a Fair Quote", desc: "We assess each item and give you a transparent, market-rate offer." },
+                { step: 4, title: "Cash on the Spot", desc: "Accept the offer and we pay you immediately and take everything away." },
+              ]}
+            />
 
             {/* Gallery */}
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider text-teal-600 mb-1">What We Buy</h3>
-                <h2 className="text-2xl font-extrabold text-slate-900">Items We Accept</h2>
-                <p className="text-xs text-slate-500">We purchase a wide range of used items in good to fair condition.</p>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {[
-                  { title: "Furniture & Home Items", area: "Sofas, Tables, Wardrobes & More", img: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=500&q=80" },
-                  { title: "Consumer Electronics", area: "Laptops, TVs, ACs, Appliances", img: "https://images.unsplash.com/photo-1593640408182-31c228b42e0e?w=500&q=80" },
-                  { title: "Vehicles & Cars", area: "All Brands & Conditions", img: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=500&q=80" },
-                  { title: "Full Apartment Clearance", area: "We Buy Everything at Once", img: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=500&q=80" },
-                ].map((item, idx) => (
-                  <div key={idx} className="group relative overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm hover:shadow-md transition-shadow">
-                    <div className="aspect-[4/3] w-full overflow-hidden bg-slate-100 relative">
-                      <img src={item.img} alt={item.title} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
-                      <span className="absolute bottom-2 left-2 rounded-lg bg-slate-900/80 backdrop-blur-sm text-[10px] font-bold text-white px-2 py-1">{item.area}</span>
-                    </div>
-                    <div className="p-4">
-                      <h4 className="text-xs font-bold text-slate-800">{item.title}</h4>
-                      <p className="text-[10px] text-slate-400 mt-0.5">Free evaluation — no obligation</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <GallerySection 
+              title="Items We Accept"
+              subtitle="What We Buy"
+              description="We purchase a wide range of used items in good to fair condition."
+              items={[
+                { title: "Furniture & Home Items", area: "Sofas, Tables, Wardrobes & More", img: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=500&q=80", subtitle: "Free evaluation — no obligation" },
+                { title: "Consumer Electronics", area: "Laptops, TVs, ACs, Appliances", img: "https://images.unsplash.com/photo-1593640408182-31c228b42e0e?w=500&q=80", subtitle: "Free evaluation — no obligation" },
+                { title: "Vehicles & Cars", area: "All Brands & Conditions", img: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=500&q=80", subtitle: "Free evaluation — no obligation" },
+                { title: "Full Apartment Clearance", area: "We Buy Everything at Once", img: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=500&q=80", subtitle: "Free evaluation — no obligation" },
+              ]}
+            />
 
             {/* Testimonials */}
             <TestimonialsSection 
@@ -551,36 +525,11 @@ export default function BuyingRedesign({ service }: BuyingRedesignProps) {
               title="What Sellers Say"
             />
 
-            {/* FAQ */}
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider text-teal-600 mb-1">Common Questions</h3>
-                <h2 className="text-2xl font-extrabold text-slate-900">Buying Used Items FAQ</h2>
-              </div>
-              <div className="space-y-2">
-                {service.faqs.map((faq, idx) => {
-                  const isOpen = openFaq === idx;
-                  return (
-                    <div key={idx} className="border border-slate-200 rounded-xl bg-white overflow-hidden">
-                      <button
-                        onClick={() => setOpenFaq(isOpen ? null : idx)}
-                        className="w-full flex items-center justify-between gap-4 px-5 py-4 text-left font-bold text-slate-800 text-xs sm:text-sm hover:bg-slate-50 transition-colors"
-                      >
-                        <span>{faq.question}</span>
-                        <ChevronDown className={cn("h-4 w-4 text-teal-600 transition-transform", isOpen && "rotate-180")} />
-                      </button>
-                      <AnimatePresence>
-                        {isOpen && (
-                          <motion.div initial={{ height: 0 }} animate={{ height: "auto" }} exit={{ height: 0 }} className="overflow-hidden border-t border-slate-100">
-                            <p className="px-5 py-3 text-xs text-slate-600 leading-relaxed bg-slate-50/50">{faq.answer}</p>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+            <FAQSection 
+              faqs={service.faqs}
+              subtitle="Common Questions"
+              title="Buying Used Items FAQ"
+            />
           </div>
         </motion.div>
       </main>
